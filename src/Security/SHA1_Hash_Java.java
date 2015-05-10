@@ -7,38 +7,32 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /** Thin wrapper on Javas SHA-1 to allow for logging
+ *
+ * This is here to allow swapping out my own implementation for a well proven one
+ * for testing.
+ *
  * Created by Jableader on 10/5/2015.
  */
-public class SHA1_Hash_Java extends MessageDigest {
+public class SHA1_Hash_Java implements Hasher {
     final Logger logger;
-    MessageDigest delegate;
 
     public SHA1_Hash_Java(Logger logger) {
-        super("Java_SHA1");
-
         this.logger = logger;
+    }
+
+    @Override
+    public byte[] hash(byte[] input) {
+        logger.Log(LogType.Standard, "Generating hash with JAVA SHA1");
+
         try {
-            delegate = MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException ex){
-            logger.Log(LogType.Error, "No SHA1");
+            MessageDigest digest = MessageDigest.getInstance("SHA1");
+            digest.reset();
+            return digest.digest(input);
+
+        } catch (NoSuchAlgorithmException ex) {
+            logger.Log(LogType.Error, "No SHA1 Digest");
+
+            throw new UnsupportedOperationException("Need java's implementation of SHA1");
         }
-    }
-
-    public void engineUpdate(byte b) {
-        delegate.update(b);
-    }
-
-    public void engineUpdate(byte b[], int offset, int length) {
-        delegate.update(b, offset, length);
-    }
-
-    public void engineReset() {
-        delegate.reset();
-    }
-
-    public byte[] engineDigest() {
-        logger.Log(LogType.Standard, "Hashing Password with Java SHA-1");
-
-        return delegate.digest();
     }
 }
