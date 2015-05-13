@@ -39,7 +39,7 @@ public class Response {
                 .add("success", wasSuccess());
     }
 
-   public void writeResponse(OutputStream s) {
+   public final void writeResponse(OutputStream s) {
        JsonObject jsonResponse = getJsonResponse().build();
 
        logger.Log(LogType.Standard, "Writing response to stream", jsonResponse);

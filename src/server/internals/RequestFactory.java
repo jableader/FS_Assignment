@@ -21,7 +21,7 @@ public class RequestFactory {
         this.logger = logger;
     }
 
-    public Request getRequest(InputStream stream) {
+    public final Request getRequest(InputStream stream) {
         Request request = getRequest(Json.createReader(stream).readObject());
 
         logger.Log(LogType.Standard, "Generating request from stream", request);
