@@ -1,9 +1,9 @@
-package Server;
+package Server_Temp;
 
-import Server.internals.Request;
-import Server.internals.RequestFactory;
-import Server.internals.Response;
-import Server.internals.ResponseFactory;
+import Server_Temp.internals.Request;
+import Server_Temp.internals.RequestFactory;
+import Server_Temp.internals.Response;
+import Server_Temp.internals.ResponseFactory;
 import Logging.LogType;
 import Logging.Logger;
 

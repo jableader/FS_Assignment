@@ -1,6 +1,6 @@
-package Server.internals;
+package Server_Temp.internals;
 
-import Server.management.Login;
+import Server_Temp.management.Login;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 public class Request {
     public final Login login;
     public final Date expiryDate;
-    public final Server.internals.RType type;
+    public final Server_Temp.internals.RType type;
 
     public RType getType() {
         return type;

@@ -1,9 +1,9 @@
-package Server.internals;
+package Server_Temp.internals;
 
-import Server.management.Key;
-import Server.management.KeyManager;
-import Server.management.Login;
-import Server.management.LoginManager;
+import Server_Temp.management.Key;
+import Server_Temp.management.KeyManager;
+import Server_Temp.management.Login;
+import Server_Temp.management.LoginManager;
 import Logging.Logger;
 import Security.Cipher;
 

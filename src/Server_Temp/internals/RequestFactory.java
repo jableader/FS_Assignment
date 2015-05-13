@@ -1,6 +1,6 @@
-package Server.internals;
+package Server_Temp.internals;
 
-import Server.management.LoginManager;
+import Server_Temp.management.LoginManager;
 import Logging.LogType;
 import Logging.Logger;
 
