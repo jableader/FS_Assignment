@@ -28,15 +28,15 @@ public class Server {
         this.responses = responses;
     }
 
-    public void Serve(AtomicBoolean shouldStop) throws IOException {
+    public void Serve(AtomicBoolean shouldStop, int port) throws IOException {
         logger.Log(LogType.Standard, "Starting server");
-        ServerSocket serverSocket = new ServerSocket(8888);
+        ServerSocket serverSocket = new ServerSocket(port);
 
         ExecutorService threadPool = Executors.newFixedThreadPool(2);
         while (!shouldStop.get()) {
             Socket s = serverSocket.accept();
 
-            threadPool.submit(() -> {
+            threadPool.execute(() -> {
                 try {
                     ServeSocket(s);
                 } catch (IOException ex) {
