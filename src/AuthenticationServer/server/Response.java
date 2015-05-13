@@ -2,6 +2,8 @@ package AuthenticationServer.server;
 
 import AuthenticationServer.Key;
 import AuthenticationServer.Login;
+import Logging.LogType;
+import Logging.Logger;
 import Security.Cipher;
 
 import javax.json.*;
@@ -17,7 +19,7 @@ import static Common.Tools.*;
  * Created by Jableader on 12/05/2015.
  */
 public class Response {
-
+    protected final Logger logger;
     protected final Login login;
     protected final Date timeCreated;
 
@@ -25,9 +27,12 @@ public class Response {
         return RType.Invalid;
     }
 
-    protected Response(Login login, Date timeCreated) {
+    protected Response(Logger logger, Login login, Date timeCreated) {
+        this.logger = logger;
         this.login = login;
         this.timeCreated = timeCreated;
+
+        logger.Log(LogType.Verbose, "Generating response of type " + getType());
     }
 
     public boolean wasSuccess() {
@@ -35,12 +40,17 @@ public class Response {
     }
 
     protected JsonObjectBuilder getJsonResponse() {
+        logger.Log(LogType.Verbose, "Begin generating response");
+
         return Json.createObjectBuilder()
                 .add("success", wasSuccess());
     }
 
    public void writeResponse(OutputStream s) {
-        Json.createWriter(s)
-                .write(getJsonResponse().build());
+       JsonObject jsonResponse = getJsonResponse().build();
+
+       logger.Log(LogType.Standard, "Writing response to stream", jsonResponse);
+
+       Json.createWriter(s).write(jsonResponse);
     }
 }

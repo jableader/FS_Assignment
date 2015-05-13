@@ -3,6 +3,8 @@ package AuthenticationServer.server;
 import AuthenticationServer.Key;
 import AuthenticationServer.Login;
 import AuthenticationServer.LoginManager;
+import Logging.LogType;
+import Logging.Logger;
 import Security.Cipher;
 
 import javax.json.Json;
@@ -21,18 +23,24 @@ import static Common.Tools.toHexString;
  */
 public class RequestFactory {
     final LoginManager loginManager;
+    final Logger logger;
 
-    public RequestFactory(LoginManager loginManager) {
+    public RequestFactory(LoginManager loginManager, Logger logger) {
         this.loginManager = loginManager;
+        this.logger = logger;
     }
 
     public Request getRequest(InputStream stream) {
         JsonObject json = Json.createReader(stream).readObject();
 
-        return new Request(loginManager.getLogin(json.getString("id")),
+        Request request =  new Request(loginManager.getLogin(json.getString("id")),
                 new Date(json.getJsonNumber("expiry").longValue()),
                 RType.fromCode(json.getString("rtype"))
         );
+
+        logger.Log(LogType.Standard, "Generating request from stream", request);
+
+        return request;
     }
 
 }

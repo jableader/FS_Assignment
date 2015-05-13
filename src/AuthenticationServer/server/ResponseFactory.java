@@ -4,6 +4,8 @@ import AuthenticationServer.Key;
 import AuthenticationServer.KeyManager;
 import AuthenticationServer.Login;
 import AuthenticationServer.LoginManager;
+import Logging.LogType;
+import Logging.Logger;
 import Security.Cipher;
 
 import javax.json.Json;
@@ -22,28 +24,30 @@ public class ResponseFactory {
     private final Cipher sessionCipher;
     private final LoginManager loginManager;
     private final KeyManager keyManager;
+    private final Logger logger;
 
-    public ResponseFactory(Cipher tgsCipher, Cipher sessionCipher, LoginManager loginManager, KeyManager keyManager) {
+    public ResponseFactory(Cipher tgsCipher, Cipher sessionCipher, LoginManager loginManager, KeyManager keyManager, Logger logger) {
         this.tgsCipher = tgsCipher;
         this.sessionCipher = sessionCipher;
         this.loginManager = loginManager;
         this.keyManager = keyManager;
+        this.logger = logger;
     }
 
     public Response getResponse(Request rq) {
         switch (rq.getType()) {
             case GetTgsKey:
-                return new TgsResponse(rq.login, new Date(), rq.expiryDate);
+                return new TgsResponse(logger, rq.login, new Date(), rq.expiryDate);
             default:
-                return new Response(rq.login, new Date());
+                return new Response(logger, rq.login, new Date());
         }
     }
 
     private class TgsResponse extends Response {
         private final Key key;
 
-        public TgsResponse(Login login, Date dateCreated, Date expiry) {
-            super(login, dateCreated);
+        public TgsResponse(Logger logger, Login login, Date dateCreated, Date expiry) {
+            super(logger, login, dateCreated);
 
             if (wasSuccess()) {
                 key = keyManager.getRandomKey(expiry);
@@ -63,8 +67,6 @@ public class ResponseFactory {
             JsonObjectBuilder base = super.getJsonResponse();
 
             if (wasSuccess()) {
-                JsonBuilderFactory factory = Json.createBuilderFactory(null);
-
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
                 Json.createGenerator(tgsCipher.getCipheringStream(byteStream))
