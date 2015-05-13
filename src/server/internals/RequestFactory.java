@@ -22,16 +22,18 @@ public class RequestFactory {
     }
 
     public Request getRequest(InputStream stream) {
-        JsonObject json = Json.createReader(stream).readObject();
-
-        Request request =  new Request(loginManager.getLogin(json.getString("id")),
-                new Date(json.getJsonNumber("expiry").longValue()),
-                RType.fromCode(json.getString("rtype"))
-        );
+        Request request = getRequest(Json.createReader(stream).readObject());
 
         logger.Log(LogType.Standard, "Generating request from stream", request);
 
         return request;
+    }
+
+    protected Request getRequest(JsonObject json) {
+        return new Request(loginManager.getLogin(json.getString("id")),
+                new Date(json.getJsonNumber("expiry").longValue()),
+                RType.fromCode(json.getString("rtype"))
+        );
     }
 
 }
