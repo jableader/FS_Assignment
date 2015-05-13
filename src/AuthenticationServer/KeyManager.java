@@ -3,6 +3,7 @@ package AuthenticationServer;
 import sun.rmi.runtime.Log;
 
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +18,10 @@ public class KeyManager {
         keys.put(login, key);
     }
 
-    public Key getRandomKey() {
+    public Key getRandomKey(Date expiry) {
         byte[] key = new byte[128];
         keyGenerator.nextBytes(key);
 
-        return new Key(key);
+        return new Key(expiry, key);
     }
 }

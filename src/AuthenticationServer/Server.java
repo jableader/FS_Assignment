@@ -1,5 +1,9 @@
 package AuthenticationServer;
 
+import AuthenticationServer.server.Request;
+import AuthenticationServer.server.RequestFactory;
+import AuthenticationServer.server.Response;
+import AuthenticationServer.server.ResponseFactory;
 import Logging.LogType;
 import Logging.Logger;
 import Security.Cipher;
@@ -21,17 +25,13 @@ import static Common.Tools.toHexString;
  */
 public class Server {
     final Logger logger;
-    final LoginManager logins;
-    final KeyManager keyManager;
-    final Cipher cipher;
+    final RequestFactory requests;
+    final ResponseFactory responses;
 
-    public Server(Logger logger, LoginManager manager, KeyManager keyManager, Cipher cipher) {
-        this.logins = manager;
+    public Server(Logger logger, RequestFactory requests, ResponseFactory responses) {
         this.logger = logger;
-        this.keyManager = keyManager;
-        this.cipher = cipher;
-
-        logger.Log(LogType.Verbose, "Logger initialised");
+        this.requests = requests;
+        this.responses = responses;
     }
 
     ServerSocket serverSocket;
@@ -40,44 +40,14 @@ public class Server {
         serverSocket = new ServerSocket(8888);
     }
 
-    public void ServeSocket(Socket s) throws IOException{
+    public void ServeSocket(Socket s) throws IOException {
         logger.Log(LogType.Standard, "Connected to " + s.getInetAddress().getHostAddress());
 
-        logger.Log(LogType.Verbose, "Parsing");
+        Request request = requests.getRequest(s.getInputStream());
+        Response response = responses.getResponse(request);
 
-        JsonObject request = Json.createReader(s.getInputStream()).readObject();
+        response.writeResponse(s.getOutputStream());
 
-        String userId = request.getString("id");
-        logger.Log(LogType.Standard, "Looking up user " + userId);
-
-        Login login = logins.getLogin(userId);
-
-        JsonObject response = getResponse(login);
-
-        Json.createWriter(s.getOutputStream()).writeObject(response);
         s.close();
-    }
-
-    JsonObject getResponse(Login login) {
-        JsonBuilderFactory factory = Json.createBuilderFactory(null);
-
-        if (login == null) {
-            logger.Log(LogType.Warning, "User not found");
-
-            return factory.createObjectBuilder()
-                    .add("success", false)
-                    .build();
-        } else {
-            logger.Log(LogType.Verbose, "User found", login);
-
-            Key key = keyManager.getRandomKey();
-            logger.Log(LogType.Verbose, "Generated key", key);
-
-            return factory.createObjectBuilder()
-                    .add("success", true)
-                    .add("key", toHexString(cipher.decrypt(key.key)))
-                    .build();
-        }
-
     }
 }

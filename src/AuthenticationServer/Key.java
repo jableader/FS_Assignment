@@ -7,15 +7,15 @@ import java.util.Date;
  */
 public class Key {
     public final byte[] key;
-    public final Date expirey;
+    public final Date expiry;
 
     public Key(Date expirey, byte[] key) {
         this.key = key;
-        this.expirey = expirey;
+        this.expiry = expirey;
     }
 
     public boolean hasExpired() {
-        return new Date().compareTo(expirey) >= 0;
+        return new Date().compareTo(expiry) >= 0;
     }
 
     public String toString() {

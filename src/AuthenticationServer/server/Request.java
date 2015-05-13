@@ -8,13 +8,17 @@ import java.util.Date;
  * Created by Jableader on 12/05/2015.
  */
 public class Request {
-    final Login login;
-    final Date expiryDate;
-    final String serviceName;
+    public final Login login;
+    public final Date expiryDate;
+    public final RType type;
 
-    protected Request(Login login, Date time, String serviceName) {
+    public RType getType() {
+        return type;
+    }
+
+    protected Request(Login login, Date expiry, RType type) {
         this.login = login;
-        this.expiryDate = time;
-        this.serviceName = serviceName;
+        this.expiryDate = expiry;
+        this.type = type;
     }
 }
