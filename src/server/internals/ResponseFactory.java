@@ -1,20 +1,18 @@
-package AuthenticationServer.server;
+package server.internals;
 
-import AuthenticationServer.Key;
-import AuthenticationServer.KeyManager;
-import AuthenticationServer.Login;
-import AuthenticationServer.LoginManager;
-import Logging.LogType;
-import Logging.Logger;
-import Security.Cipher;
+import server.management.Key;
+import server.management.KeyManager;
+import server.management.Login;
+import server.management.LoginManager;
+import logging.Logger;
+import security.Cipher;
 
 import javax.json.Json;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
-import static Common.Tools.toHexString;
+import static common.Tools.toHexString;
 
 /**
  * Created by Jableader on 12/05/2015.

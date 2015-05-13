@@ -1,4 +1,4 @@
-package AuthenticationServer.server;
+package server.internals;
 
 /**
  * Created by Jableader on 13/5/2015.

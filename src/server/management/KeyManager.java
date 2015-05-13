@@ -1,7 +1,7 @@
-package AuthenticationServer;
+package server.management;
 
-import Logging.LogType;
-import Logging.Logger;
+import logging.LogType;
+import logging.Logger;
 
 import java.security.SecureRandom;
 import java.util.Date;

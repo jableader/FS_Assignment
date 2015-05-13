@@ -1,4 +1,4 @@
-package AuthenticationServer;
+package server.management;
 
 import java.util.Date;
 
@@ -19,6 +19,6 @@ public class Key {
     }
 
     public String toString() {
-        return Common.Tools.toHexString(key);
+        return common.Tools.toHexString(key);
     }
 }

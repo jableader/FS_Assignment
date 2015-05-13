@@ -1,18 +1,17 @@
-package AuthenticationServer;
+package server;
 
-import AuthenticationServer.server.Request;
-import AuthenticationServer.server.RequestFactory;
-import AuthenticationServer.server.Response;
-import AuthenticationServer.server.ResponseFactory;
-import Logging.LogType;
-import Logging.Logger;
+import server.internals.Request;
+import server.internals.RequestFactory;
+import server.internals.Response;
+import server.internals.ResponseFactory;
+import logging.LogType;
+import logging.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,7 +29,7 @@ public class Server {
     }
 
     public void Serve(AtomicBoolean shouldStop) throws IOException {
-        logger.Log(LogType.Standard, "Starting Server");
+        logger.Log(LogType.Standard, "Starting server");
         ServerSocket serverSocket = new ServerSocket(8888);
 
         ExecutorService threadPool = Executors.newFixedThreadPool(2);

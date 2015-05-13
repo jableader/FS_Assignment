@@ -1,19 +1,12 @@
-package AuthenticationServer.server;
+package server.internals;
 
-import AuthenticationServer.Key;
-import AuthenticationServer.Login;
-import Logging.LogType;
-import Logging.Logger;
-import Security.Cipher;
+import server.management.Login;
+import logging.LogType;
+import logging.Logger;
 
 import javax.json.*;
-import javax.json.stream.JsonGenerator;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Date;
-
-import static Common.Tools.*;
 
 /**
  * Created by Jableader on 12/05/2015.

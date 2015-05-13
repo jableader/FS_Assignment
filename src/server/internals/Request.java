@@ -1,6 +1,6 @@
-package AuthenticationServer.server;
+package server.internals;
 
-import AuthenticationServer.Login;
+import server.management.Login;
 
 import java.util.Date;
 

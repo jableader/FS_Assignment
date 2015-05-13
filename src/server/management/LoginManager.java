@@ -1,7 +1,7 @@
-package AuthenticationServer;
+package server.management;
 
-import Logging.LogType;
-import Logging.Logger;
+import logging.LogType;
+import logging.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static Common.Tools.fromHexString;
+import static common.Tools.fromHexString;
 
 public class LoginManager {
     protected Map<String, Login> users = new HashMap<>();
