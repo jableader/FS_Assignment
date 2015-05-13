@@ -10,7 +10,7 @@ import java.util.Date;
 public class Request {
     public final Login login;
     public final Date expiryDate;
-    public final server.internals.RType type;
+    public final RType type;
 
     public RType getType() {
         return type;
