@@ -32,8 +32,8 @@ public class RequestFactory {
     protected Request getRequest(JsonObject json) {
         return new Request(loginManager.getLogin(json.getString("id")),
                 new Date(json.getJsonNumber("expiry").longValue()),
-                RType.fromCode(json.getString("rtype"))
-        );
+                RType.fromCode(json.getString("rtype")),
+                clientAddress);
     }
 
 }

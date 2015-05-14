@@ -1,18 +1,11 @@
 package server.internals;
 
-import server.management.Key;
 import server.management.KeyManager;
-import server.management.Login;
 import server.management.LoginManager;
 import logging.Logger;
 import security.Cipher;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
-
-import static common.Tools.toHexString;
 
 /**
  * Created by Jableader on 12/05/2015.
@@ -34,57 +27,15 @@ public class ResponseFactory {
 
     public Response getResponse(Request rq) {
         switch (rq.getType()) {
-            case GetTgsKey:
-                return new TgsResponse(logger, rq.login, new Date(), rq.expiryDate);
+            case GetTicketGrantingTicket:
+                return new GetTgtResponse(logger, rq, keyManager, new Date(), rq.expiryDate, tgsCipher, sessionCipher);
+
+            case GetSessionKey:
+                return new GetSessionKeyResponse(logger, rq, new Date());
+
             default:
-                return new Response(logger, rq.login, new Date());
+                return new Response(logger, rq, new Date(), RType.Invalid);
         }
     }
 
-    private class TgsResponse extends Response {
-        private final Key key;
-
-        public TgsResponse(Logger logger, Login login, Date dateCreated, Date expiry) {
-            super(logger, login, dateCreated);
-
-            if (wasSuccess()) {
-                key = keyManager.getRandomKey(expiry);
-                keyManager.registerKey(login, key);
-            } else {
-                key = null;
-            }
-        }
-
-        @Override
-        public RType getType() {
-            return RType.GetTgsKey;
-        }
-
-        @Override
-        protected JsonObjectBuilder getJsonResponse() {
-            JsonObjectBuilder base = super.getJsonResponse();
-
-            if (wasSuccess()) {
-                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-                Json.createGenerator(tgsCipher.getCipheringStream(byteStream))
-                        .write("id", login.id)
-                        .write("time", timeCreated.getTime())
-                        .write("expiry", key.expiry.getTime())
-                        .write("key", toHexString(key.key));
-
-                base.add("tgt", toHexString(byteStream.toByteArray()));
-
-                byteStream = new ByteArrayOutputStream();
-                Json.createGenerator(sessionCipher.getCipheringStream(byteStream))
-                        .write("time", timeCreated.getTime())
-                        .write("expiry", key.expiry.getTime())
-                        .write("key", toHexString(key.key));
-
-                base.add("sessionKey", toHexString(byteStream.toByteArray()));
-            }
-
-            return base;
-        }
-    }
 }

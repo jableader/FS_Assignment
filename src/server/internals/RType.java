@@ -4,8 +4,8 @@ package server.internals;
  * Created by Jableader on 13/5/2015.
  */
 public enum RType {
-    GetTgsKey("TGS"),
-    GetTgsTicket("TGT"),
+    GetTicketGrantingTicket("TGT"),
+    GetSessionKey("GSK"),
     Invalid("INV");
 
     public final String id;

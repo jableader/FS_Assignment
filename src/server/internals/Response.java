@@ -13,23 +13,21 @@ import java.util.Date;
  */
 public class Response {
     protected final Logger logger;
-    protected final Login login;
+    protected final Request request;
     protected final Date timeCreated;
+    protected final RType type;
 
-    public RType getType() {
-        return RType.Invalid;
-    }
-
-    protected Response(Logger logger, Login login, Date timeCreated) {
+    protected Response(Logger logger, Request request, Date timeCreated, RType type) {
         this.logger = logger;
-        this.login = login;
+        this.request = request;
         this.timeCreated = timeCreated;
+        this.type = type;
 
-        logger.Log(LogType.Verbose, "Generating response of type " + getType());
+        logger.Log(LogType.Verbose, "Generating response of type " + type);
     }
 
     public boolean wasSuccess() {
-        return login != null && getType() != RType.Invalid;
+        return request.login != null && type != RType.Invalid;
     }
 
     protected JsonObjectBuilder getJsonResponse() {
