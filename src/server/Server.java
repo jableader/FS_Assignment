@@ -1,8 +1,5 @@
 package server;
 
-import server.internals.Request;
-import server.internals.RequestFactory;
-import server.internals.Response;
 import server.internals.ResponseFactory;
 import logging.LogType;
 import logging.Logger;

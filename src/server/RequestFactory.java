@@ -1,4 +1,4 @@
-package server.internals;
+package server;
 
 import server.management.LoginManager;
 import logging.LogType;
@@ -10,7 +10,8 @@ import java.io.InputStream;
 import java.util.Date;
 
 /**
- * Created by Jableader on 12/05/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public class RequestFactory {
     final LoginManager loginManager;
@@ -30,10 +31,8 @@ public class RequestFactory {
     }
 
     protected Request getRequest(JsonObject json) {
-        return new Request(loginManager.getLogin(json.getString("id")),
-                new Date(json.getJsonNumber("expiry").longValue()),
-                RType.fromCode(json.getString("rtype")),
-                clientAddress);
-    }
+        switch (RType.fromCode(json.getString("rtype"))) {
 
+        }
+    }
 }

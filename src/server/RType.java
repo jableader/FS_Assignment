@@ -1,4 +1,4 @@
-package server.internals;
+package server;
 
 /**
  * Created by Jableader on 13/5/2015.

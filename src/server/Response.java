@@ -1,6 +1,5 @@
-package server.internals;
+package server;
 
-import server.management.Login;
 import logging.LogType;
 import logging.Logger;
 
@@ -11,23 +10,21 @@ import java.util.Date;
 /**
  * Created by Jableader on 12/05/2015.
  */
-public class Response {
+public abstract class Response {
     protected final Logger logger;
     protected final Request request;
     protected final Date timeCreated;
-    protected final RType type;
 
-    protected Response(Logger logger, Request request, Date timeCreated, RType type) {
+    protected Response(Logger logger, Request request, Date timeCreated) {
         this.logger = logger;
         this.request = request;
         this.timeCreated = timeCreated;
-        this.type = type;
 
-        logger.Log(LogType.Verbose, "Generating response of type " + type);
+        logger.Log(LogType.Verbose, "Generating response for type " + request.getType());
     }
 
     public boolean wasSuccess() {
-        return request.login != null && type != RType.Invalid;
+        return request.login != null;
     }
 
     protected JsonObjectBuilder getJsonResponse() {

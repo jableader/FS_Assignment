@@ -2,6 +2,8 @@ package server.internals;
 
 import logging.Logger;
 import security.Cipher;
+import server.Request;
+import server.Response;
 import server.management.Key;
 import server.management.KeyManager;
 
@@ -21,7 +23,7 @@ class GetTgtResponse extends Response {
     private final Cipher tgsCipher;
 
     public GetTgtResponse(Logger logger, Request request, KeyManager keyManager, Date dateCreated, Date expiry, Cipher tgsCipher, Cipher sessionCipher) {
-        super(logger, request, dateCreated, RType.GetTicketGrantingTicket);
+        super(logger, request, dateCreated);
 
         this.clientSecretCipher = tgsCipher;
         this.tgsCipher = sessionCipher;
