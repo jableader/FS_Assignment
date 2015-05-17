@@ -1,7 +1,6 @@
-package server.internals;
+package as.internals;
 
 import logging.Logger;
-import server.Request;
 import server.Response;
 
 import java.util.Date;
@@ -11,9 +10,8 @@ import java.util.Date;
  * Created by Jacob Dunk
  */
 public class InvalidResponse extends Response {
-
-    protected InvalidResponse(Logger logger, Request request, Date timeCreated) {
-        super(logger, request, timeCreated);
+    protected InvalidResponse(Logger logger, Date timeCreated) {
+        super(logger, timeCreated);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package server;
+package common;
 
 /**
  * Created by Jableader on 13/5/2015.

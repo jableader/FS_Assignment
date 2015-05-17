@@ -1,7 +1,6 @@
-package server.internals;
+package as.internals;
 
 import logging.Logger;
-import server.RType;
 import server.Request;
 import server.Response;
 import server.management.Login;
@@ -14,14 +13,8 @@ import java.net.InetAddress;
  */
 public class GetSessionKeyRequest extends Request {
 
-
-    protected GetSessionKeyRequest(Logger logger, Login login, InetAddress clientAddress) {
-        super(logger, login, clientAddress);
-    }
-
-    @Override
-    public RType getType() {
-        return null;
+    public GetSessionKeyRequest(Logger logger, Login login, InetAddress clientAddress) {
+        super(logger, clientAddress);
     }
 
     @Override

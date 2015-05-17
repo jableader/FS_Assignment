@@ -2,6 +2,7 @@ package server;
 
 import logging.LogType;
 import logging.Logger;
+import server.management.Login;
 
 import javax.json.*;
 import java.io.OutputStream;
@@ -12,20 +13,14 @@ import java.util.Date;
  */
 public abstract class Response {
     protected final Logger logger;
-    protected final Request request;
     protected final Date timeCreated;
 
-    protected Response(Logger logger, Request request, Date timeCreated) {
+    protected Response(Logger logger, Date timeCreated) {
         this.logger = logger;
-        this.request = request;
         this.timeCreated = timeCreated;
-
-        logger.Log(LogType.Verbose, "Generating response for type " + request.getType());
     }
 
-    public boolean wasSuccess() {
-        return request.login != null;
-    }
+    public abstract boolean wasSuccess();
 
     protected JsonObjectBuilder getJsonResponse() {
         logger.Log(LogType.Verbose, "Begin generating response");

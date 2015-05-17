@@ -1,15 +1,17 @@
-package server.internals;
+package as.internals;
 
 import logging.Logger;
 import security.Cipher;
-import server.Request;
+import security.EmptyCipher;
 import server.Response;
 import server.management.Key;
 import server.management.KeyManager;
+import server.management.Login;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 import java.io.ByteArrayOutputStream;
+import java.net.InetAddress;
 import java.util.Date;
 
 import static common.Tools.toHexString;
@@ -17,23 +19,35 @@ import static common.Tools.toHexString;
 /**
  * Created by Jableader on 14/5/2015.
  */
-class GetTgtResponse extends Response {
+class TgtResponse extends Response {
     private final Key key;
-    private final Cipher clientSecretCipher;
-    private final Cipher tgsCipher;
+    private final Login login;
+    private final InetAddress clientAddress;
 
-    public GetTgtResponse(Logger logger, Request request, KeyManager keyManager, Date dateCreated, Date expiry, Cipher tgsCipher, Cipher sessionCipher) {
-        super(logger, request, dateCreated);
-
-        this.clientSecretCipher = tgsCipher;
-        this.tgsCipher = sessionCipher;
+    public TgtResponse(Logger logger, Login login, InetAddress address, KeyManager keyManager, Date dateCreated, Date expiry) {
+        super(logger, dateCreated);
+        this.login = login;
+        this.clientAddress = address;
 
         if (wasSuccess()) {
             key = keyManager.getRandomKey(expiry);
-            keyManager.registerKey(request.login, key);
+            keyManager.registerKey(login, key);
         } else {
             key = null;
         }
+    }
+
+    protected Cipher getTgsCipher() {
+        return new EmptyCipher();
+    }
+
+    protected Cipher getClientSecretCipher() {
+        return new EmptyCipher();
+    }
+
+    @Override
+    public boolean wasSuccess() {
+        return login != null;
     }
 
     @Override
@@ -43,7 +57,7 @@ class GetTgtResponse extends Response {
         if (wasSuccess()) {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-            Json.createGenerator(clientSecretCipher.getCipheringStream(byteStream))
+            Json.createGenerator(getClientSecretCipher().getCipheringStream(byteStream))
                     .write("time", timeCreated.getTime())
                     .write("expiry", key.expiry.getTime())
                     .write("key", toHexString(key.key));
@@ -51,9 +65,9 @@ class GetTgtResponse extends Response {
             base.add("sessionKey", toHexString(byteStream.toByteArray()));
 
             byteStream = new ByteArrayOutputStream();
-            Json.createGenerator(tgsCipher.getCipheringStream(byteStream))
-                    .write("id", request.login.id)
-                    .write("address", request.clientAddress.getCanonicalHostName())
+            Json.createGenerator(getTgsCipher().getCipheringStream(byteStream))
+                    .write("id", login.id)
+                    .write("clientAddress", clientAddress.getCanonicalHostName())
                     .write("time", timeCreated.getTime())
                     .write("expiry", key.expiry.getTime())
                     .write("key", toHexString(key.key));

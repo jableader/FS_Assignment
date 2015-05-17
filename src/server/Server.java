@@ -1,12 +1,16 @@
 package server;
 
-import server.internals.ResponseFactory;
+import as.internals.InvalidRequest;
 import logging.LogType;
 import logging.Logger;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,13 +20,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Server {
     final Logger logger;
-    final RequestFactory requests;
-    final ResponseFactory responses;
+    final Map<String, RequestGenerator> requests = new HashMap<>();
 
-    public Server(Logger logger, RequestFactory requests, ResponseFactory responses) {
+    public Server(Logger logger) {
         this.logger = logger;
-        this.requests = requests;
-        this.responses = responses;
     }
 
     public void Serve(AtomicBoolean shouldStop, int port) throws IOException {
@@ -52,11 +53,20 @@ public class Server {
     public void ServeSocket(Socket s) throws IOException {
         logger.Log(LogType.Standard, "Connected to " + s.getInetAddress().getHostAddress());
 
-        Request request = requests.getRequest(s.getInputStream());
-        Response response = responses.getResponse(request);
+        JsonObject jso = Json.createReader(s.getInputStream()).readObject();
 
-        response.writeResponse(s.getOutputStream());
+        RequestGenerator rg = requests.getOrDefault(jso.getString("serviceName"), null);
+        Request rq = (rg != null) ?
+                rg.getRequest(s.getInetAddress(), jso) :
+                new InvalidRequest(logger, s.getInetAddress(), jso.getString("serviceName"));
+
+        rq.getResponse()
+            .writeResponse(s.getOutputStream());
 
         s.close();
+    }
+
+    public void registerRequest(String serviceName, RequestGenerator rg) {
+        requests.put(serviceName, rg);
     }
 }
