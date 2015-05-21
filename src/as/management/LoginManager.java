@@ -17,10 +17,10 @@ public class LoginManager {
     public LoginManager(Logger logger, Iterable<Login> logins) {
         this.logger = logger;
 
-        logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
-
         for (Login l: logins)
             addLogin(l);
+
+        logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
     public LoginManager(Logger logger, File source) throws IOException{
@@ -33,6 +33,8 @@ public class LoginManager {
             String[] details = sc.nextLine().split(" ");
             addLogin(new Login(details[0], fromHexString(details[1])));
         }
+
+        logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
     protected void addLogin(Login login){

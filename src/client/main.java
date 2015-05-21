@@ -1,6 +1,6 @@
 package client;
 
-import common.RType;
+import common.Services;
 import security.BasicCipher;
 import security.Cipher;
 import security.EmptyCipher;
@@ -32,7 +32,7 @@ public class main {
                 .writeObject(jb
                         .add("id", "bob")
                         .add("expiry", millisFromNow(1000 * 60 * 60).getTime())
-                        .add("serviceName", RType.GetTicketGrantingTicket.id)
+                        .add("serviceName", Services.GetTicketGrantingTicket.id)
                         .build());
 
         JsonObject response = Json
