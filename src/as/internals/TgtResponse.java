@@ -1,6 +1,7 @@
 package as.internals;
 
 import logging.Logger;
+import security.BasicCipher;
 import security.Cipher;
 import security.EmptyCipher;
 import server.Response;
@@ -42,7 +43,7 @@ class TgtResponse extends Response {
     }
 
     protected Cipher getClientSecretCipher() {
-        return new EmptyCipher();
+        return new BasicCipher(login.password);
     }
 
     @Override
@@ -58,19 +59,25 @@ class TgtResponse extends Response {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
             Json.createGenerator(getClientSecretCipher().getCipheringStream(byteStream))
-                    .write("time", timeCreated.getTime())
-                    .write("expiry", key.expiry.getTime())
-                    .write("key", toHexString(key.key));
+                    .writeStartObject()
+                        .write("time", timeCreated.getTime())
+                        .write("expiry", key.expiry.getTime())
+                        .write("key", toHexString(key.key))
+                    .writeEnd()
+                    .flush();
 
             base.add("sessionKey", toHexString(byteStream.toByteArray()));
 
             byteStream = new ByteArrayOutputStream();
             Json.createGenerator(getTgsCipher().getCipheringStream(byteStream))
-                    .write("id", login.id)
-                    .write("clientAddress", clientAddress.getCanonicalHostName())
-                    .write("time", timeCreated.getTime())
-                    .write("expiry", key.expiry.getTime())
-                    .write("key", toHexString(key.key));
+                    .writeStartObject()
+                        .write("id", login.id)
+                        .write("clientAddress", clientAddress.getCanonicalHostName())
+                        .write("time", timeCreated.getTime())
+                        .write("expiry", key.expiry.getTime())
+                        .write("key", toHexString(key.key))
+                    .writeEnd()
+                    .flush();
 
             base.add("tgt", toHexString(byteStream.toByteArray()));
         }

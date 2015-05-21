@@ -55,6 +55,8 @@ public class Server {
 
         JsonObject jso = Json.createReader(s.getInputStream()).readObject();
 
+        logger.Log(LogType.Verbose, "Recieved: " + jso.toString());
+
         RequestGenerator rg = requests.getOrDefault(jso.getString("serviceName"), null);
         Request rq = (rg != null) ?
                 rg.getRequest(s.getInetAddress(), jso) :
@@ -64,6 +66,7 @@ public class Server {
             .writeResponse(s.getOutputStream());
 
         s.close();
+        logger.Log(LogType.Standard, "Finished with " + s.getInetAddress().getHostAddress());
     }
 
     public void registerRequest(String serviceName, RequestGenerator rg) {

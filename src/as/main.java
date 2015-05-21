@@ -10,7 +10,7 @@ import server.management.KeyManager;
 import server.management.Login;
 import server.management.LoginManager;
 
-import static common.Tools.getDate
+import static common.Tools.getDate;
 
 import java.io.IOException;
 import java.util.Arrays;

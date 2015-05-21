@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static common.Tools.toHexString;
+
 /**
  * Created by Jableader on 11/05/2015.
  */
@@ -30,7 +32,7 @@ public class KeyManager {
 
         Key key = new Key(expiry, bytes);
 
-        logger.Log(LogType.Verbose, "Generated key", bytes);
+        logger.Log(LogType.Verbose, "Generated key " + toHexString(bytes));
         return key;
     }
 }

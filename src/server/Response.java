@@ -23,7 +23,7 @@ public abstract class Response {
     public abstract boolean wasSuccess();
 
     protected JsonObjectBuilder getJsonResponse() {
-        logger.Log(LogType.Verbose, "Begin generating response");
+        logger.Log(LogType.Verbose, "Begin generating response of " + this.getClass().getName());
 
         return Json.createObjectBuilder()
                 .add("success", wasSuccess());
