@@ -4,11 +4,9 @@ import common.RType;
 import logging.Logger;
 import logging.StreamLogger;
 import server.Server;
-import as.internals.GetSessionKeyRequest;
-import as.internals.TgtRequest;
-import server.management.KeyManager;
-import server.management.Login;
-import server.management.LoginManager;
+import as.management.KeyManager;
+import as.management.Login;
+import as.management.LoginManager;
 
 import static common.Tools.getDate;
 
@@ -31,10 +29,6 @@ public class main {
         s.registerRequest(RType.GetTicketGrantingTicket.id,
                 (address, jsonRequest) ->
                         new TgtRequest(logger, address, km, getDate(jsonRequest, "expiry"), lm.getLogin(jsonRequest.getString("id"))));
-
-        s.registerRequest(RType.GetSessionKey.id,
-                (address, jsonRequest) ->
-                    new GetSessionKeyRequest(logger, lm.getLogin(jsonRequest.getString("id")), address));
 
         s.Serve(new AtomicBoolean(false), 8888);
     }

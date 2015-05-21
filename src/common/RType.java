@@ -4,6 +4,7 @@ package common;
  * Created by Jableader on 13/5/2015.
  */
 public enum RType {
+    GetService("SER"),
     GetTicketGrantingTicket("TGT"),
     GetSessionKey("GSK"),
     Invalid("INV");

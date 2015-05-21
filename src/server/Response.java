@@ -2,7 +2,6 @@ package server;
 
 import logging.LogType;
 import logging.Logger;
-import server.management.Login;
 
 import javax.json.*;
 import java.io.OutputStream;
@@ -32,7 +31,7 @@ public abstract class Response {
    public final void writeResponse(OutputStream s) {
        JsonObject jsonResponse = getJsonResponse().build();
 
-       logger.Log(LogType.Standard, "Writing response to stream", jsonResponse);
+       logger.Log(LogType.Standard, "Generated: " + jsonResponse);
 
        Json.createWriter(s).write(jsonResponse);
     }

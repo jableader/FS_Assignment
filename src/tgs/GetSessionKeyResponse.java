@@ -1,4 +1,4 @@
-package as.internals;
+package tgs;
 
 import logging.LogType;
 import logging.Logger;

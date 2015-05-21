@@ -3,8 +3,7 @@ package client;
 import common.RType;
 import security.BasicCipher;
 import security.Cipher;
-import sun.misc.IOUtils;
-import sun.nio.ch.IOUtil;
+import security.EmptyCipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -13,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 import static common.Tools.fromHexString;
 import static common.Tools.millisFromNow;
@@ -42,10 +40,8 @@ public class main {
                 .readObject();
 
         System.out.println(response.toString());
-        System.out.println(new String(fromHexString(response.getString("tgt"))));
-
-        Cipher cipher = new BasicCipher("password123".getBytes());
-        System.out.println(decode(response.getString("sessionKey"), cipher));
+        System.out.println(decode(response.getString("tgs"), new EmptyCipher()));
+        System.out.println(decode(response.getString("sessionKey"), new BasicCipher("password123".getBytes())));
     }
 
     static String decode(String hexString, Cipher cipher) throws IOException {

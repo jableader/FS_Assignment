@@ -1,10 +1,10 @@
-package as.internals;
+package as;
 
 import logging.Logger;
 import server.Request;
 import server.Response;
-import server.management.KeyManager;
-import server.management.Login;
+import as.management.KeyManager;
+import as.management.Login;
 
 import java.net.InetAddress;
 import java.util.Date;

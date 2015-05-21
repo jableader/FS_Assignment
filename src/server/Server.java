@@ -1,6 +1,5 @@
 package server;
 
-import as.internals.InvalidRequest;
 import logging.LogType;
 import logging.Logger;
 
@@ -55,7 +54,7 @@ public class Server {
 
         JsonObject jso = Json.createReader(s.getInputStream()).readObject();
 
-        logger.Log(LogType.Verbose, "Recieved: " + jso.toString());
+        logger.Log(LogType.Verbose, "Received: " + jso.toString());
 
         RequestGenerator rg = requests.getOrDefault(jso.getString("serviceName"), null);
         Request rq = (rg != null) ?

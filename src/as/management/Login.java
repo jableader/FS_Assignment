@@ -1,4 +1,4 @@
-package server.management;
+package as.management;
 
 /**
  * Created by Jableader on 10/5/2015.

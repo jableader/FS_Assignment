@@ -1,13 +1,13 @@
-package as.internals;
+package as;
 
 import logging.Logger;
 import security.BasicCipher;
 import security.Cipher;
 import security.EmptyCipher;
 import server.Response;
-import server.management.Key;
-import server.management.KeyManager;
-import server.management.Login;
+import as.management.Key;
+import as.management.KeyManager;
+import as.management.Login;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -79,7 +79,7 @@ class TgtResponse extends Response {
                     .writeEnd()
                     .flush();
 
-            base.add("tgt", toHexString(byteStream.toByteArray()));
+            base.add("tgs", toHexString(byteStream.toByteArray()));
         }
 
         return base;

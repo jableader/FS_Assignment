@@ -1,9 +1,9 @@
-package as.internals;
+package tgs;
 
 import logging.Logger;
 import server.Request;
 import server.Response;
-import server.management.Login;
+import as.management.Login;
 
 import java.net.InetAddress;
 

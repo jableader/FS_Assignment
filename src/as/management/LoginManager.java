@@ -1,4 +1,4 @@
-package server.management;
+package as.management;
 
 import logging.LogType;
 import logging.Logger;
@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static common.Tools.fromHexString;
 
