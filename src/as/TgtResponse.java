@@ -72,7 +72,7 @@ class TgtResponse extends Response {
             Json.createGenerator(getTgsCipher().getCipheringStream(byteStream))
                     .writeStartObject()
                         .write("id", login.id)
-                        .write("clientAddress", clientAddress.getCanonicalHostName())
+                        .write("clientAddress", clientAddress.toString())
                         .write("time", timeCreated.getTime())
                         .write("expiry", key.expiry.getTime())
                         .write("key", toHexString(key.key))

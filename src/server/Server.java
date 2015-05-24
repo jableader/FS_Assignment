@@ -6,8 +6,10 @@ import logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -18,8 +20,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by Jableader on 10/5/2015.
  */
 public class Server {
+    final Map<String, ResponseGenerator> responses = new HashMap<>();
     final Logger logger;
-    final Map<String, RequestGenerator> requests = new HashMap<>();
+    final ResponseGenerator invalidResponseGenerator = (source, req) -> new InvalidResponse(this.logger, new Date());
 
     public Server(Logger logger) {
         this.logger = logger;
@@ -56,19 +59,17 @@ public class Server {
 
         logger.Log(LogType.Verbose, "Received: " + jso.toString());
 
-        RequestGenerator rg = requests.getOrDefault(jso.getString("serviceName"), null);
-        Request rq = (rg != null) ?
-                rg.getRequest(s.getInetAddress(), jso) :
-                new InvalidRequest(logger, s.getInetAddress(), jso.getString("serviceName"));
+        Response response = responses
+                .getOrDefault(jso.getString("serviceName"), invalidResponseGenerator)
+                .getResponse(s.getInetAddress(), jso);
 
-        rq.getResponse()
-            .writeResponse(s.getOutputStream());
+        response.writeResponse(s.getOutputStream());
 
         s.close();
         logger.Log(LogType.Standard, "Finished with " + s.getInetAddress().getHostAddress());
     }
 
-    public void registerRequest(String serviceName, RequestGenerator rg) {
-        requests.put(serviceName, rg);
+    public void registerRequest(String serviceName, ResponseGenerator rg) {
+        responses.put(serviceName, rg);
     }
 }

@@ -5,7 +5,8 @@ import common.Services;
 import logging.Logger;
 import logging.StreamLogger;
 import server.Request;
-import server.RequestGenerator;
+import server.Response;
+import server.ResponseGenerator;
 import as.management.KeyManager;
 import as.management.Login;
 import as.management.LoginManager;
@@ -18,13 +19,14 @@ import static common.Tools.getDate;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class AuthenticationServer implements RequestGenerator {
+public class AuthenticationServer implements ResponseGenerator {
 
     public static void main(String[] args) throws IOException {
         CommandLineParser clp = new CommandLineParser(args);
@@ -50,7 +52,14 @@ public class AuthenticationServer implements RequestGenerator {
         this.keyManager = keyManager;
     }
 
-    public Request getRequest(InetAddress address, JsonObject jsonRequest) {
-        return new TgtRequest(logger, address, keyManager, getDate(jsonRequest, "expiry"), loginManager.getLogin(jsonRequest.getString("id")));
+    public Response getResponse(InetAddress address, JsonObject jsonRequest) {
+        return new TgtResponse(
+                logger,
+                loginManager.getLogin(jsonRequest.getString("id")),
+                address,
+                keyManager,
+                new Date(),
+                getDate(jsonRequest, "expiry")
+        );
     }
 }
