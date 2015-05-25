@@ -5,8 +5,8 @@ import security.BasicCipher;
 import security.Cipher;
 import security.EmptyCipher;
 import server.Response;
-import as.management.Key;
-import as.management.KeyManager;
+import common.Key;
+import common.KeyManager;
 import as.management.Login;
 
 import javax.json.Json;
@@ -79,7 +79,7 @@ class TgtResponse extends Response {
                     .writeEnd()
                     .flush();
 
-            base.add("tgs", toHexString(byteStream.toByteArray()));
+            base.add("tgt", toHexString(byteStream.toByteArray()));
         }
 
         return base;

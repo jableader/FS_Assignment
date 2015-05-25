@@ -34,7 +34,7 @@ public final class Tools {
         InputStream fs = null;
         try {
             fs = new FileInputStream(f);
-            IOUtils.readFully(fs, 0, true);
+            return IOUtils.readFully(fs, 0, true);
         } finally {
             if (fs != null) {
                 fs.close();

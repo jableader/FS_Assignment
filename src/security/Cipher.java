@@ -19,6 +19,14 @@ public abstract class Cipher {
         return new DecryptedInStream(s);
     }
 
+    public byte[] encryptBytes(byte[] source) {
+        byte[] encryptedBytes = new byte[source.length];
+        for (int i = 0; i < encryptedBytes.length; i++)
+            encryptedBytes[i] = encrypt(source[i], i);
+
+        return encryptedBytes;
+    }
+
     class DecryptedInStream extends InputStream {
         final InputStream inStream;
 

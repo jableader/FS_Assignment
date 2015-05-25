@@ -1,7 +1,6 @@
 package server;
 
 import logging.Logger;
-import server.Response;
 
 import java.util.Date;
 

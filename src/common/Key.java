@@ -1,4 +1,4 @@
-package as.management;
+package common;
 
 import java.util.Date;
 

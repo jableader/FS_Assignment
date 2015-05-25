@@ -1,7 +1,5 @@
 package security;
 
-import javax.crypto.*;
-
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk

@@ -7,7 +7,7 @@ import logging.StreamLogger;
 import server.Request;
 import server.Response;
 import server.ResponseGenerator;
-import as.management.KeyManager;
+import common.KeyManager;
 import as.management.Login;
 import as.management.LoginManager;
 import server.Server;

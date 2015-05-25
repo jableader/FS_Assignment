@@ -6,7 +6,6 @@ import logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;

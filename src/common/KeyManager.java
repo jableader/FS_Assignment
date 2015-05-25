@@ -1,5 +1,6 @@
-package as.management;
+package common;
 
+import as.management.Login;
 import logging.LogType;
 import logging.Logger;
 
