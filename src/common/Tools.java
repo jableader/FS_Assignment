@@ -1,25 +1,25 @@
 package common;
 
 import security.Cipher;
-import sun.misc.IOUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.*;
-import java.util.Date;
 import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.util.Base64;
+import java.util.Date;
 
 /**
  * Created by Jableader on 11/05/2015.
  */
 public final class Tools {
 
-    public static String toHexString(byte[] array) {
-        return DatatypeConverter.printHexBinary(array);
+    public static String toBase64(byte[] array) {
+        return Base64.getEncoder().encodeToString(array);
     }
 
-    public static byte[] fromHexString(String s) {
-        return DatatypeConverter.parseHexBinary(s);
+    public static byte[] fromBase64(String s) {
+        return Base64.getDecoder().decode(s);
     }
 
     public static Date getDate(JsonObject jso, String s) {
@@ -30,20 +30,8 @@ public final class Tools {
         return new Date(new Date().getTime() + millis);
     }
 
-    public static byte[] readBytes(File f) throws IOException {
-        InputStream fs = null;
-        try {
-            fs = new FileInputStream(f);
-            return IOUtils.readFully(fs, 0, true);
-        } finally {
-            if (fs != null) {
-                fs.close();
-            }
-        }
-    }
-
     public static JsonObject decipherJsonObject(Cipher c, String s) {
-        InputStream byteStream = new ByteArrayInputStream(fromHexString(s));
+        InputStream byteStream = new ByteArrayInputStream(fromBase64(s));
         InputStream decipheredStream = c.getDecipheringStream(byteStream);
 
         return Json.createReader(decipheredStream).readObject();

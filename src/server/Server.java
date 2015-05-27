@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by Jableader on 10/5/2015.
  */
 public class Server {
-    final Map<String, ResponseGenerator> responses = new HashMap<>();
+    final Map<String, RequestHandler> responses = new HashMap<>();
     final Logger logger;
-    final ResponseGenerator invalidResponseGenerator = (source, req) -> new InvalidResponse(this.logger, new Date());
+    final RequestHandler invalidResponseGenerator = (source, req) -> new InvalidResponse(this.logger, new Date());
 
     public Server(Logger logger) {
         this.logger = logger;
@@ -68,7 +68,7 @@ public class Server {
         logger.Log(LogType.Standard, "Finished with " + s.getInetAddress().getHostAddress());
     }
 
-    public void registerRequest(String serviceName, ResponseGenerator rg) {
+    public void registerRequest(String serviceName, RequestHandler rg) {
         responses.put(serviceName, rg);
     }
 }

@@ -1,55 +1,44 @@
 package client;
 
-import common.Services;
-import security.BasicCipher;
-import security.Cipher;
-import security.EmptyCipher;
+import common.CommandLineParser;
+import common.Login;
+import logging.LogType;
+import logging.Logger;
+import logging.StreamLogger;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-
-import static common.Tools.fromHexString;
-import static common.Tools.millisFromNow;
 
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
 public class main {
-    final static String authAddress = "localhost";
-    final static int authPort = 8888;
+    public static void main(String[] sargs) throws IOException {
+        CommandLineParser args = new CommandLineParser(sargs);
+        Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"));
 
-    public static void main(String[] args) throws IOException {
-        Socket socket = new Socket(authAddress, authPort);
+        if (!args.hasKey("l") && !args.hasKey("p")) {
+            logger.Log(LogType.Error, "You must provide a login name and password");
+            return;
+        }
 
-        JsonObjectBuilder jb = Json.createObjectBuilder();
-        Json.createWriter(socket.getOutputStream())
-                .writeObject(jb
-                        .add("id", "bob")
-                        .add("expiry", millisFromNow(1000 * 60 * 60).getTime())
-                        .add("serviceName", Services.GetTicketGrantingTicket.id)
-                        .build());
+        Login login = new Login(args.getString("l"), args.getString("p").getBytes());
 
-        JsonObject response = Json
-                .createReader(socket.getInputStream())
-                .readObject();
+        int authPort = args.getInt("asPort", args.getInt("port", 8888));
+        AuthRequest authRequest = new AuthRequest(logger, authPort, login);
+        if (!authRequest.wasSuccess()) {
+            logger.Log(LogType.Error, "Auth failed");
+            return;
+        }
 
-        System.out.println(response.toString());
-        System.out.println(decode(response.getString("tgs"), new EmptyCipher()));
-        System.out.println(decode(response.getString("sessionKey"), new BasicCipher("password123".getBytes())));
-    }
+        int tgsPort = args.getInt("tgsPort", args.getInt("port", 8888));
+        TgsRequest tgsRequest = new TgsRequest(logger, tgsPort, login, authRequest.getTgsCipher(), authRequest.getTgt());
+        if (!tgsRequest.wasSuccess()) {
+            logger.Log(LogType.Error, "Tgs request failed");
+            return;
+        }
 
-    static String decode(String hexString, Cipher cipher) throws IOException {
-        byte[] bytes = fromHexString(hexString);
-        InputStream decipheringStream = cipher.getDecipheringStream(new ByteArrayInputStream(bytes));
+        logger.Log(LogType.Standard, "Auth was a success, you may now communicate freely with the server");
 
-        byte[] deciphered = new byte[bytes.length];
-        decipheringStream.read(deciphered);
-        return new String(deciphered);
     }
 }

@@ -1,7 +1,5 @@
 package common;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -19,11 +17,20 @@ public class CommandLineParser {
         return Stream.of(args).anyMatch(s -> s.equalsIgnoreCase("-" + name));
     }
 
+    public String getString(String name) {
+        String result = getString(name, null);
+        if (result == null)
+            throw new IllegalArgumentException("Required parameter '" + name + "' not found");
+        else
+            return result;
+    }
+
+
     public String getString(String name, String def) {
         name = "-" + name;
         for (int i = 0; i < args.length - 1; i++)
             if (args[i].equals(name))
-                return args[i+1];
+                return args[i + 1];
 
         return def;
     }

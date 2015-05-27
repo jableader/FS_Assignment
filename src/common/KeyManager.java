@@ -1,6 +1,5 @@
 package common;
 
-import as.management.Login;
 import logging.LogType;
 import logging.Logger;
 
@@ -9,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static common.Tools.toHexString;
+import static common.Tools.toBase64;
 
 /**
  * Created by Jableader on 11/05/2015.
@@ -23,7 +22,7 @@ public class KeyManager {
         this.logger = logger;
     }
 
-    public void registerKey(Login login, Key key){
+    public void registerKey(Login login, Key key) {
         keys.put(login, key);
     }
 
@@ -33,7 +32,7 @@ public class KeyManager {
 
         Key key = new Key(expiry, bytes);
 
-        logger.Log(LogType.Verbose, "Generated key " + toHexString(bytes));
+        logger.Log(LogType.Verbose, "Generated key " + toBase64(bytes));
         return key;
     }
 }

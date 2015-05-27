@@ -9,6 +9,7 @@ import java.io.OutputStream;
  */
 public abstract class Cipher {
     protected abstract byte encrypt(byte input, int position);
+
     protected abstract byte decrypt(byte input, int position);
 
     public OutputStream getCipheringStream(OutputStream s) {
@@ -25,6 +26,15 @@ public abstract class Cipher {
             encryptedBytes[i] = encrypt(source[i], i);
 
         return encryptedBytes;
+    }
+
+    public byte[] decryptBytes(byte[] source) {
+        byte[] decripted = new byte[source.length];
+        for (int i = 0; i < source.length; i++) {
+            decripted[i] = decrypt(source[i], i);
+        }
+
+        return decripted;
     }
 
     class DecryptedInStream extends InputStream {
@@ -50,8 +60,9 @@ public abstract class Cipher {
         }
 
         int position = 0;
+
         public void write(int b) throws IOException {
-            outStream.write(encrypt((byte)b, position++));
+            outStream.write(encrypt((byte) b, position++));
         }
     }
 }

@@ -3,7 +3,9 @@ package server;
 import logging.LogType;
 import logging.Logger;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -28,11 +30,11 @@ public abstract class Response {
                 .add("success", wasSuccess());
     }
 
-   public final void writeResponse(OutputStream s) {
-       JsonObject jsonResponse = getJsonResponse().build();
+    public final void writeResponse(OutputStream s) {
+        JsonObject jsonResponse = getJsonResponse().build();
 
-       logger.Log(LogType.Standard, "Generated: " + jsonResponse);
+        logger.Log(LogType.Standard, "Generated: " + jsonResponse);
 
-       Json.createWriter(s).write(jsonResponse);
+        Json.createWriter(s).write(jsonResponse);
     }
 }

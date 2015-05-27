@@ -19,6 +19,6 @@ public class Key {
     }
 
     public String toString() {
-        return common.Tools.toHexString(key);
+        return common.Tools.toBase64(key);
     }
 }

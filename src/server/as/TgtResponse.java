@@ -1,13 +1,13 @@
-package as;
+package server.as;
 
+import common.Key;
+import common.KeyManager;
+import common.Login;
 import logging.Logger;
 import security.BasicCipher;
 import security.Cipher;
 import security.EmptyCipher;
 import server.Response;
-import common.Key;
-import common.KeyManager;
-import as.management.Login;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.InetAddress;
 import java.util.Date;
 
-import static common.Tools.toHexString;
+import static common.Tools.toBase64;
 
 /**
  * Created by Jableader on 14/5/2015.
@@ -60,26 +60,26 @@ class TgtResponse extends Response {
 
             Json.createGenerator(getClientSecretCipher().getCipheringStream(byteStream))
                     .writeStartObject()
-                        .write("time", timeCreated.getTime())
-                        .write("expiry", key.expiry.getTime())
-                        .write("key", toHexString(key.key))
+                    .write("time", timeCreated.getTime())
+                    .write("expiry", key.expiry.getTime())
+                    .write("key", toBase64(key.key))
                     .writeEnd()
                     .flush();
 
-            base.add("sessionKey", toHexString(byteStream.toByteArray()));
+            base.add("sessionKey", toBase64(byteStream.toByteArray()));
 
             byteStream = new ByteArrayOutputStream();
             Json.createGenerator(getTgsCipher().getCipheringStream(byteStream))
                     .writeStartObject()
-                        .write("id", login.id)
-                        .write("clientAddress", clientAddress.toString())
-                        .write("time", timeCreated.getTime())
-                        .write("expiry", key.expiry.getTime())
-                        .write("key", toHexString(key.key))
+                    .write("id", login.id)
+                    .write("clientAddress", clientAddress.toString())
+                    .write("time", timeCreated.getTime())
+                    .write("expiry", key.expiry.getTime())
+                    .write("key", toBase64(key.key))
                     .writeEnd()
                     .flush();
 
-            base.add("tgt", toHexString(byteStream.toByteArray()));
+            base.add("tgt", toBase64(byteStream.toByteArray()));
         }
 
         return base;

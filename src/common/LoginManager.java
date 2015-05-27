@@ -1,4 +1,4 @@
-package as.management;
+package common;
 
 import logging.LogType;
 import logging.Logger;
@@ -6,9 +6,11 @@ import logging.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
-import static common.Tools.fromHexString;
+import static common.Tools.fromBase64;
 
 public class LoginManager {
     protected Map<String, Login> users = new HashMap<>();
@@ -17,27 +19,27 @@ public class LoginManager {
     public LoginManager(Logger logger, Iterable<Login> logins) {
         this.logger = logger;
 
-        for (Login l: logins)
+        for (Login l : logins)
             addLogin(l);
 
         logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
-    public LoginManager(Logger logger, File source) throws IOException{
+    public LoginManager(Logger logger, File source) throws IOException {
         this.logger = logger;
 
         logger.Log(LogType.Standard, "Loading logins from file");
         Scanner sc = new Scanner(new FileInputStream(source));
 
-        while (sc.hasNextLine()){
+        while (sc.hasNextLine()) {
             String[] details = sc.nextLine().split(" ");
-            addLogin(new Login(details[0], fromHexString(details[1])));
+            addLogin(new Login(details[0], fromBase64(details[1])));
         }
 
         logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
-    protected void addLogin(Login login){
+    protected void addLogin(Login login) {
         logger.Log(LogType.Standard, "Adding user " + login.id);
 
         users.put(login.id, login);

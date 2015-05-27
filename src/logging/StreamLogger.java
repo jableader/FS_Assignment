@@ -1,7 +1,6 @@
 package logging;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +19,7 @@ public class StreamLogger implements Logger {
         this.verbose = verbose;
     }
 
-    public void Log(LogType type, String message, Object... args){
+    public void Log(LogType type, String message, Object... args) {
         if (verbose || type != LogType.Verbose) {
             PrintStream output = (type.IsError()) ? stdError : stdOut;
 

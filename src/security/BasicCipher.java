@@ -13,13 +13,13 @@ public class BasicCipher extends Cipher {
 
     @Override
     protected byte encrypt(byte input, int position) {
-        int encrypted = (int)(input) + (int)(key[position % key.length]);
-        return (byte)(encrypted & 0xFF);
+        int encrypted = (int) (input) + (int) (key[position % key.length]);
+        return (byte) (encrypted & 0xFF);
     }
 
     @Override
     protected byte decrypt(byte input, int position) {
-        int decrypted = (int)input - (int) (key[position % key.length]);
+        int decrypted = (int) input - (int) (key[position % key.length]);
         return (byte) (decrypted & 0xFF);
     }
 }
