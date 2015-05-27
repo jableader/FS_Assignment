@@ -8,7 +8,8 @@ public enum LogType {
     Error,
     Warning,
     Verbose,
-    Standard;
+    Standard,
+    Cipher;
 
     public boolean IsError() {
         return this == Error || this == Warning;

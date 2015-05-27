@@ -23,4 +23,8 @@ public class RotateBits extends StreamCipher {
         return (byte)(((input & 0xff) << amountToRotateBy) | ((input & 0xff) >>> (8 - amountToRotateBy)));
     }
 
+    @Override
+    public String toString() {
+        return "RotateBits(3)";
+    }
 }

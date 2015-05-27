@@ -13,10 +13,10 @@ import java.util.stream.Stream;
  * each cipher
  */
 public class AggregateCipher implements Cipher {
-    Cipher[] ciphers;
+    protected final Iterable<Cipher> ciphers;
 
     public AggregateCipher(Cipher... ciphers){
-        this.ciphers = ciphers;
+        this.ciphers = Arrays.asList(ciphers);
     }
 
     @Override

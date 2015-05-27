@@ -2,6 +2,8 @@ package security.implementations;
 
 import security.BlockCipher;
 
+import static common.Tools.toBase64;
+
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
@@ -24,5 +26,9 @@ public class XorWithPreviousBlock extends BlockCipher {
     @Override
     protected byte[] decrypt(byte[] block, byte[] previousEncryptedBlock) {
         return encrypt(block, previousEncryptedBlock);
+    }
+
+    public String toString() {
+        return "BlockXOR(IV=" + toBase64(initialisationVector) + ")";
     }
 }

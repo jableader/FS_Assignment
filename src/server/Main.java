@@ -22,8 +22,13 @@ public class Main {
     public static void main(String[] sargs) throws IOException {
         CommandLineArgs args = new CommandLineArgs(sargs);
         Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"));
-        Cipher serviceServerSecretCipher = getServiceServerCipher();
-        Cipher tgsSecretCipher = getTgsSecretCipher();
+        Cipher serviceServerSecretCipher = args.hasKey("c") ?
+                new NoisyAggregateCipher(logger, getServiceServerCipherChain()) :
+                new AggregateCipher(getServiceServerCipherChain());
+
+        Cipher tgsSecretCipher = args.hasKey("c") ?
+                new NoisyAggregateCipher(logger, getTgsSecretCipherChain()) :
+                new AggregateCipher(getTgsSecretCipherChain());
 
         Server server = new Server(logger);
 
@@ -66,32 +71,33 @@ public class Main {
         System.out.println("If logins.txt is left blank then the user 'bob' with password 'password123' will be used");
     }
 
-    static Cipher getServiceServerCipher() {
+    static Cipher[] getServiceServerCipherChain() {
         //Use hard coded keys for examples sake, in reality the keys would be much larger, randomly generated and securely
         //Distributed between the service
 
         byte[] key = "OMG so secure!!1!1!!".getBytes();
         byte[] initialisationVector = "Pretend this got generated elsewhere instead of being a code constant".getBytes();
 
-        return new AggregateCipher(
+
+        return new Cipher[]{
                 new SwapNibbles(),
                 new XorWithKey(key),
                 new XorWithPreviousBlock(initialisationVector),
                 new RotateBytesInBlock(key.length % initialisationVector.length, initialisationVector.length)
-        );
+        };
     }
 
-    static Cipher getTgsSecretCipher() {
+    static Cipher[] getTgsSecretCipherChain() {
         //Use hard coded keys for examples sake, in reality the keys would be much larger, randomly generated and securely
         //Distributed between the services
 
         byte[] key = "Ziggy played guitar!".getBytes();
         byte[] initialisationVector = "A different init vector to the last".getBytes();
 
-        return new AggregateCipher(
+        return new Cipher[]{
                 new SwapNibbles(),
                 new XorWithKey(key),
                 new XorWithPreviousBlock(initialisationVector)
-        );
+        };
     }
 }

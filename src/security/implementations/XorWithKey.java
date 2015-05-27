@@ -2,6 +2,8 @@ package security.implementations;
 
 import security.StreamCipher;
 
+import static common.Tools.toBase64;
+
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
@@ -22,5 +24,9 @@ public class XorWithKey extends StreamCipher {
     @Override
     protected byte decrypt(byte input, int position) {
         return encrypt(input, position); //Identical each way
+    }
+
+    public String toString() {
+        return "XOR(Key:" + toBase64(key) + ")";
     }
 }

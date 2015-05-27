@@ -46,6 +46,7 @@ public class Server {
                 } catch (Exception ex) {
                     logger.Log(LogType.Error, "Unexpected exception: " + ex.getMessage(), ex);
 
+                    ex.printStackTrace();
                     shouldStop.set(true);
                 }
             });

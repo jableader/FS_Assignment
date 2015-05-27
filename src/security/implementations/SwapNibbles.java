@@ -7,8 +7,13 @@ import security.StreamCipher;
  * Created by Jacob Dunk
  */
 public class SwapNibbles extends RotateBits {
-
     public SwapNibbles() {
         super(4);
     }
+
+    @Override
+    public String toString() {
+        return "SwapNibbles()";
+    }
+
 }

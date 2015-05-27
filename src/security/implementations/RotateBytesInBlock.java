@@ -45,4 +45,9 @@ public class RotateBytesInBlock extends BlockCipher {
 
         return encryptedBlock;
     }
+
+    @Override
+    public String toString() {
+        return "RotateBytesInBlock(shift: " + shiftByAmount + ", blockSize: " + blockSize + ")";
+    }
 }
