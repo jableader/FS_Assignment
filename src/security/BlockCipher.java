@@ -37,15 +37,15 @@ public abstract class BlockCipher implements Cipher {
         return new BlockInputStream(baseStream);
     }
 
-    protected abstract byte[] encrypt(byte[] block, byte[] previousBlock);
-    protected abstract byte[] decrypt(byte[] block, byte[] previousBlock);
+    protected abstract byte[] encrypt(byte[] block, byte[] previousEncryptedBlock);
+    protected abstract byte[] decrypt(byte[] block, byte[] previousEncryptedBlock);
 
     private class BlockOutputStream extends OutputStream {
         final OutputStream baseStream;
 
         int bufferPosition = 0;
         byte[] buffer = new byte[initialisationVector.length];
-        byte[] previousBuffer = initialisationVector.clone();
+        byte[] encryptedPreviousBuffer = initialisationVector.clone();
 
         private BlockOutputStream(OutputStream baseStream) {
             this.baseStream = baseStream;
@@ -56,11 +56,8 @@ public abstract class BlockCipher implements Cipher {
             buffer[bufferPosition] = (byte)b;
 
             if (++bufferPosition == buffer.length) {
-                baseStream.write(encrypt(buffer, previousBuffer));
-
-                byte[] temp = previousBuffer;
-                previousBuffer = buffer;
-                buffer = temp;
+                encryptedPreviousBuffer = encrypt(buffer, encryptedPreviousBuffer);
+                baseStream.write(encryptedPreviousBuffer);
 
                 bufferPosition = 0;
             }
@@ -68,12 +65,14 @@ public abstract class BlockCipher implements Cipher {
 
         @Override
         public void flush() throws IOException {
-            baseStream.write(encrypt(Arrays.copyOf(buffer, bufferPosition), previousBuffer));
+            baseStream.write(encrypt(Arrays.copyOf(buffer, bufferPosition), encryptedPreviousBuffer));
             baseStream.flush();
         }
 
         @Override
         public void close() throws IOException {
+            flush();
+
             super.close();
             baseStream.close();
         }

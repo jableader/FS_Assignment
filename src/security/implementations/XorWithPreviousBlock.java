@@ -13,16 +13,16 @@ public class XorWithPreviousBlock extends BlockCipher {
     }
 
     @Override
-    protected byte[] encrypt(byte[] block, byte[] previousBlock) {
+    protected byte[] encrypt(byte[] block, byte[] previousEncryptedBlock) {
         byte[] newArray = new byte[block.length];
         for (int i = 0; i < newArray.length; i++)
-            newArray[i] = (byte) (block[i] ^ previousBlock[i]);
+            newArray[i] = (byte) ((block[i] & 0xFF) ^ (previousEncryptedBlock[i] & 0xFF));
 
         return newArray;
     }
 
     @Override
-    protected byte[] decrypt(byte[] block, byte[] previousBlock) {
-        return encrypt(block, previousBlock);
+    protected byte[] decrypt(byte[] block, byte[] previousEncryptedBlock) {
+        return encrypt(block, previousEncryptedBlock);
     }
 }

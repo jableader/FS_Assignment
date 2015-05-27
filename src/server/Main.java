@@ -74,14 +74,12 @@ public class Main {
         byte[] initialisationVector = "Pretend this got generated elsewhere instead of being a code constant".getBytes();
         int blockSize = initialisationVector.length;
 
-        return new XorWithKey(key);
-//
-//        return new AggregateCipher(
-//                new XorWithPreviousBlock(initialisationVector),
-//                new RotateBytesInBlock(key.length, blockSize),
-//                new SwapNibbles(),
-//                new XorWithKey(key)
-//        );
+        return new AggregateCipher(
+                new XorWithPreviousBlock(initialisationVector),
+                new RotateBytesInBlock(key.length, blockSize),
+                new SwapNibbles(),
+                new XorWithKey(key)
+        );
     }
 
     static Cipher getTgsSecretCipher() {
@@ -91,13 +89,11 @@ public class Main {
         byte[] key = "Ziggy played guitar!".getBytes();
         byte[] initialisationVector = "Pretend this got generated elsewhere instead of being a code constant".getBytes();
 
-        return new XorWithKey(key);
-//
-//        return new AggregateCipher(
-//                new XorWithKey(key),
-//                new RotateBits(4),
-//                new SwapNibbles(),
-//                new XorWithPreviousBlock(initialisationVector)
-//        );
+        return new AggregateCipher(
+                new XorWithKey(key),
+                new RotateBits(4),
+                new SwapNibbles(),
+                new XorWithPreviousBlock(initialisationVector)
+        );
     }
 }

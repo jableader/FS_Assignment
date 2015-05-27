@@ -6,7 +6,7 @@ import security.StreamCipher;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class EmptyCipher extends StreamCipher {
+public class EmptyStreamCipher extends StreamCipher {
     public byte encrypt(byte b, int pos) {
         return b;
     }

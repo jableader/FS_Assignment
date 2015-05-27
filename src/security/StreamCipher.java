@@ -65,6 +65,8 @@ public abstract class StreamCipher implements Cipher {
 
         @Override
         public void close() throws IOException {
+            flush();
+
             super.close();
             baseStream.close();
         }

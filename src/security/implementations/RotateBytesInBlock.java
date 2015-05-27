@@ -14,32 +14,31 @@ public class RotateBytesInBlock extends BlockCipher {
     public RotateBytesInBlock(int shiftByAmount, int blockSize) {
         super(blockSize);
 
+        if (shiftByAmount < 0 || shiftByAmount > blockSize)
+            throw new IllegalArgumentException("shiftByAmount must be between 0 and blockSize");
+
         this.shiftByAmount = shiftByAmount;
     }
 
     @Override
-    protected byte[] encrypt(byte[] block, byte[] previousBlock) {
+    protected byte[] encrypt(byte[] block, byte[] previousEncryptedBlock) {
         return rotate(block, shiftByAmount);
     }
 
     @Override
-    protected byte[] decrypt(byte[] block, byte[] previousBlock) {
-        return rotate(block, -shiftByAmount);
+    protected byte[] decrypt(byte[] block, byte[] previousEncryptedBlock) {
+        return rotate(block, block.length - shiftByAmount);
     }
 
-    byte[] rotate(byte[] block, int howMuch) {
-        howMuch = putWithinRange(howMuch, block.length);
+    static byte[] rotate(byte[] block, int howMuch) {
+        howMuch = howMuch % block.length;
 
         byte[] encryptedBlock = new byte[block.length];
-        System.arraycopy(block, 0, encryptedBlock, howMuch, encryptedBlock.length - howMuch);
-        System.arraycopy(block, encryptedBlock.length - howMuch, encryptedBlock, 0, howMuch);
+        int placeToCopyFromStart = encryptedBlock.length - howMuch;
+
+        System.arraycopy(block, howMuch, encryptedBlock, 0, placeToCopyFromStart);
+        System.arraycopy(block, 0, encryptedBlock, placeToCopyFromStart, howMuch);
 
         return encryptedBlock;
-    }
-
-    private int putWithinRange(int i, int range) {
-        return i < 0 ?
-                (i - (-i % range)) % range :
-                i % range;
     }
 }

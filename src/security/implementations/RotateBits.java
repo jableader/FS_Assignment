@@ -15,15 +15,12 @@ public class RotateBits extends StreamCipher {
 
     @Override
     protected byte encrypt(byte input, int position) {
-        return circularRotate(input, amountToRotateBy);
+        return (byte)(((input & 0xff)  >>> amountToRotateBy) | ((input & 0xff) << (8 - amountToRotateBy)));
     }
 
     @Override
     protected byte decrypt(byte input, int position) {
-        return circularRotate(input, -amountToRotateBy);
+        return (byte)(((input & 0xff) << amountToRotateBy) | ((input & 0xff) >>> (8 - amountToRotateBy)));
     }
 
-    private byte circularRotate(byte b, int r) {
-        return (byte)(b >> r | (b << Byte.SIZE - r));
-    }
 }
