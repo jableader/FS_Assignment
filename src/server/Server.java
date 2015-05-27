@@ -16,20 +16,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Jableader on 10/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public class Server {
     final Map<String, RequestHandler> responses = new HashMap<>();
     final Logger logger;
-    final RequestHandler invalidResponseGenerator = (source, req) -> new InvalidResponse(this.logger, new Date());
+    final RequestHandler invalidRequestHandler;
 
     public Server(Logger logger) {
         this.logger = logger;
+        this.invalidRequestHandler = (source, req) -> new InvalidResponse(this.logger, new Date());
     }
 
     public void Serve(AtomicBoolean shouldStop, int port) throws IOException {
-        logger.Log(LogType.Standard, "Starting server");
         ServerSocket serverSocket = new ServerSocket(port);
+
+        logger.Log(LogType.Standard, "Awaiting connection");
 
         ExecutorService threadPool = Executors.newFixedThreadPool(2);
         while (!shouldStop.get()) {
@@ -52,20 +55,22 @@ public class Server {
     }
 
     public void ServeSocket(Socket s) throws IOException {
-        logger.Log(LogType.Standard, "Connected to " + s.getInetAddress().getHostAddress());
+        try {
+            logger.Log(LogType.Standard, "Connected to " + s.getInetAddress().getHostAddress());
 
-        JsonObject jso = Json.createReader(s.getInputStream()).readObject();
+            JsonObject jso = Json.createReader(s.getInputStream()).readObject();
 
-        logger.Log(LogType.Verbose, "Received: " + jso.toString());
+            logger.Log(LogType.Verbose, "Received: " + jso);
 
-        Response response = responses
-                .getOrDefault(jso.getString("serviceName"), invalidResponseGenerator)
-                .getResponse(s.getInetAddress(), jso);
+            Response response = responses
+                    .getOrDefault(jso.getString("serviceName"), invalidRequestHandler)
+                    .getResponse(s.getInetAddress(), jso);
 
-        response.writeResponse(s.getOutputStream());
-
-        s.close();
-        logger.Log(LogType.Standard, "Finished with " + s.getInetAddress().getHostAddress());
+            response.writeResponse(s.getOutputStream());
+        } finally {
+            s.close();
+            logger.Log(LogType.Standard, "Connection with " + s.getInetAddress().getHostAddress() + " has been closed");
+        }
     }
 
     public void registerRequest(String serviceName, RequestHandler rg) {

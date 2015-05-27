@@ -18,7 +18,7 @@ import static common.Tools.toBase64;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class GetSessionKeyResponse extends Response {
+public class TicketGrantingServiceResponse extends Response {
     private final KeyManager keyManager;
     private final Date expiry;
     private final Cipher serviceSecretCipher;
@@ -26,7 +26,7 @@ public class GetSessionKeyResponse extends Response {
     private final String clientId;
     private final InetAddress sourceAddress;
 
-    public GetSessionKeyResponse(Logger logger, Date timeCreated, KeyManager keyManager, InetAddress source, Date expiry, Cipher serviceSecretCipher, Cipher tgsSessionCipher, String clientId, InetAddress sourceAddress) {
+    public TicketGrantingServiceResponse(Logger logger, Date timeCreated, KeyManager keyManager, InetAddress source, Date expiry, Cipher serviceSecretCipher, Cipher tgsSessionCipher, String clientId, InetAddress sourceAddress) {
         super(logger, timeCreated);
         this.keyManager = keyManager;
         this.expiry = expiry;
@@ -54,7 +54,7 @@ public class GetSessionKeyResponse extends Response {
                         .write("id", clientId)
                         .write("address", sourceAddress.toString())
                         .write("expiry", clientSessionKey.expiry.getTime())
-                        .write("key", toBase64(keyManager.generateKey(expiry).key))
+                        .write("key", toBase64(clientSessionKey.key))
                     .writeEnd()
                     .close();
 

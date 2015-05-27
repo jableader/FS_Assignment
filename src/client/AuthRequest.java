@@ -2,15 +2,15 @@ package client;
 
 import common.Login;
 import common.Services;
+import logging.LogType;
 import logging.Logger;
+import security.Cipher;
 import security.implementations.XorWithKey;
-import security.StreamCipher;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import static common.Tools.fromBase64;
-import static common.Tools.millisFromNow;
+import static common.Tools.*;
 
 /**
  * Fundamentals Of Security, Assignment 2
@@ -33,19 +33,36 @@ public class AuthRequest extends Request {
         if (wasSuccess()) {
             tgt = jsonObject.getString("tgt");
 
-            String hexTgsKey = jsonObject.getJsonObject("sessionKey").getString("key");
-            keyForTgsSession = fromBase64(hexTgsKey);
+            try {
+                JsonObject tgsKey = decipherJsonObject(getLoginCipher(), jsonObject.getString("sessionKey"));
+
+                String base64TgsKey = tgsKey.getString("key");
+                logger.Log(LogType.Verbose, "Received TGS Session Key " + base64TgsKey);
+
+                keyForTgsSession = fromBase64(base64TgsKey);
+            } catch (IllegalArgumentException ex) {
+                logger.Log(LogType.Error, "Could not decrypt the session key for the TGS");
+            }
         }
     }
 
     @Override
     protected JsonObjectBuilder getJsonRequest() {
         return super.getJsonRequest()
-                .add("expiry", millisFromNow(100 * 60 * 60).getTime())
+                .add("expiry", secondsFromNow(100 * 60 * 60).getTime())
                 .add("id", login.id);
     }
 
-    public StreamCipher getTgsCipher() {
+    @Override
+    public boolean wasSuccess() {
+        return super.wasSuccess() && !(hasBeenProcessed() && keyForTgsSession == null);
+    }
+
+    Cipher getLoginCipher() {
+        return new XorWithKey(login.password);
+    }
+
+    public Cipher getTgsCipher() {
         return new XorWithKey(keyForTgsSession);
     }
 

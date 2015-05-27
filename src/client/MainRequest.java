@@ -2,8 +2,9 @@ package client;
 
 import common.Login;
 import common.Services;
+import logging.LogType;
 import logging.Logger;
-import security.StreamCipher;
+import security.Cipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -22,14 +23,14 @@ import static common.Tools.toBase64;
 public class MainRequest extends Request {
     private final String command;
     private final String ticket;
-    private final StreamCipher sessionCipher;
+    private final Cipher sessionCipher;
     private final Login login;
     private final Date timeStamp;
 
     private String result;
-    private Date responseTime;
+    private boolean recievedCorrectResponseTimestamp;
 
-    public MainRequest(Logger logger, int port, String command, String ticket, StreamCipher sessionCipher, Login login) {
+    public MainRequest(Logger logger, int port, String command, String ticket, Cipher sessionCipher, Login login) {
         super(logger, port, Services.ServerService);
         this.ticket = ticket;
         this.command = command;
@@ -45,7 +46,7 @@ public class MainRequest extends Request {
 
     @Override
     public boolean wasSuccess() {
-        return super.wasSuccess() && responseTime.getTime() - timeStamp.getTime() == 1;
+        return super.wasSuccess() && (!hasBeenProcessed() || recievedCorrectResponseTimestamp);
     }
 
     @Override
@@ -68,8 +69,21 @@ public class MainRequest extends Request {
     protected void processResponse(JsonObject baseResponse) {
         super.processResponse(baseResponse);
 
-        JsonObject response = decipherJsonObject(sessionCipher, baseResponse.getString("response"));
-        responseTime = getDate(response, "time");
-        result = response.getString("result");
+        if (wasSuccess()) {
+            JsonObject response;
+            try {
+                response = decipherJsonObject(sessionCipher, baseResponse.getString("response"));
+            } catch (IllegalArgumentException ex) {
+                logger.Log(LogType.Error, "Could not decipher the response");
+                return;
+            }
+
+            result = response.getString("result");
+            recievedCorrectResponseTimestamp = getDate(response, "time").getTime() - timeStamp.getTime() == 1;
+
+            if (!recievedCorrectResponseTimestamp) {
+                logger.Log(LogType.Warning, "Did not recieve the expected timestamp from the server. It can not be trusted.");
+            }
+        }
     }
 }

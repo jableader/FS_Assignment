@@ -6,11 +6,13 @@ import logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
 /**
- * Created by Jableader on 12/05/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public abstract class Response {
     protected final Logger logger;
@@ -30,11 +32,12 @@ public abstract class Response {
                 .add("success", wasSuccess());
     }
 
-    public final void writeResponse(OutputStream s) {
+    public final void writeResponse(OutputStream s) throws IOException {
         JsonObject jsonResponse = getJsonResponse().build();
 
         logger.Log(LogType.Standard, "Generated: " + jsonResponse);
 
         Json.createWriter(s).write(jsonResponse);
+        s.close();
     }
 }

@@ -6,10 +6,10 @@ import java.util.stream.Stream;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class CommandLineParser {
+public class CommandLineArgs {
     protected final String[] args;
 
-    public CommandLineParser(String[] args) {
+    public CommandLineArgs(String[] args) {
         this.args = args;
     }
 

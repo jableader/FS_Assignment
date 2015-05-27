@@ -20,7 +20,7 @@ public interface Cipher {
 
         try {
             cipherStream.write(b);
-            cipherStream.flush();
+            cipherStream.close();
         } catch (IOException ex) {
 
             ex.printStackTrace();

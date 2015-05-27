@@ -8,6 +8,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -15,10 +16,11 @@ import java.net.Socket;
  * Created by Jacob Dunk
  */
 public class Request {
-    private final Logger logger;
-    private final int port;
+    protected final Logger logger;
+    protected final int port;
 
     private boolean wasSuccess;
+    private boolean hasBeenProcessed;
 
     public Request(Logger logger, int port, Services service) {
         this.logger = logger;
@@ -26,12 +28,6 @@ public class Request {
         this.service = service;
 
         logger.Log(LogType.Standard, "Performing " + service.name() + " request");
-
-        try {
-            processResponse(performRequest());
-        } catch (IOException ex) {
-            wasSuccess = false;
-        }
     }
 
     protected void processResponse(JsonObject response) {
@@ -48,11 +44,15 @@ public class Request {
     private JsonObject performRequest() throws IOException {
         Socket s = new Socket("localhost", port);
 
-        Json.createWriter(s.getOutputStream())
-                .writeObject(getJsonRequest().build());
+        OutputStream os = s.getOutputStream();
+        Json.createWriter(os)
+                .write(getJsonRequest().build());
 
-        return Json.createReader(s.getInputStream())
+        JsonObject response = Json.createReader(s.getInputStream())
                 .readObject();
+
+        s.close();
+        return response;
     }
 
     private final Services service;
@@ -63,5 +63,20 @@ public class Request {
 
     public boolean wasSuccess() {
         return wasSuccess;
+    }
+
+    public boolean hasBeenProcessed() {
+        return hasBeenProcessed;
+    }
+
+    public void executeRequest() {
+        try {
+            processResponse(performRequest());
+        } catch (IOException ex) {
+            logger.Log(LogType.Error, "Failed to communicate with " + service + " service: " + ex.getMessage());
+            wasSuccess = false;
+        } finally {
+            hasBeenProcessed = true;
+        }
     }
 }

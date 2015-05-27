@@ -25,22 +25,30 @@ public class LoginManager {
         logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
-    public LoginManager(Logger logger, File source) throws IOException {
+    public LoginManager(Logger logger, File source)  {
         this.logger = logger;
 
-        logger.Log(LogType.Standard, "Loading logins from file");
-        Scanner sc = new Scanner(new FileInputStream(source));
+        try {
+            logger.Log(LogType.Standard, "Loading logins from file");
+            Scanner sc = new Scanner(new FileInputStream(source));
 
-        while (sc.hasNextLine()) {
-            String[] details = sc.nextLine().split(" ");
-            addLogin(new Login(details[0], fromBase64(details[1])));
+            while (sc.hasNextLine()) {
+                String[] details = sc.nextLine().split(" ");
+                addLogin(new Login(details[0], fromBase64(details[1])));
+            }
+        } catch (IOException ex) {
+            logger.Log(LogType.Warning, "Could not load from logins.txt");
+        }
+
+        if (users.size() == 0) {
+            addLogin(new Login("bob", "password123".getBytes()));
         }
 
         logger.Log(LogType.Standard, "Loaded " + users.size() + " users");
     }
 
     protected void addLogin(Login login) {
-        logger.Log(LogType.Standard, "Adding user " + login.id);
+        logger.Log(LogType.Verbose, "Adding user " + login.id);
 
         users.put(login.id, login);
     }

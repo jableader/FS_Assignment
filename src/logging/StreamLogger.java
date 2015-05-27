@@ -24,7 +24,7 @@ public class StreamLogger implements Logger {
         if (verbose || type != LogType.Verbose) {
             PrintStream output = (type.IsError()) ? stdError : stdOut;
 
-            output.printf("[%s] %s: %s\n", formatter.format(new Date()), type, message);
+            output.printf("[%s] %s\n", formatter.format(new Date()), message);
         }
     }
 

@@ -1,6 +1,5 @@
 package security;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,7 +60,7 @@ public abstract class BlockCipher implements Cipher {
 
                 byte[] temp = previousBuffer;
                 previousBuffer = buffer;
-                buffer = previousBuffer;
+                buffer = temp;
 
                 bufferPosition = 0;
             }
@@ -70,6 +69,13 @@ public abstract class BlockCipher implements Cipher {
         @Override
         public void flush() throws IOException {
             baseStream.write(encrypt(Arrays.copyOf(buffer, bufferPosition), previousBuffer));
+            baseStream.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            baseStream.close();
         }
     }
 
@@ -104,6 +110,12 @@ public abstract class BlockCipher implements Cipher {
             }
 
             return decryptedCurrentBlock[bufferPosition++];
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            baseStream.close();
         }
     }
 }

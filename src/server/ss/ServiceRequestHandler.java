@@ -33,14 +33,15 @@ public class ServiceRequestHandler implements RequestHandler {
     public Response getResponse(InetAddress source, JsonObject req) {
         JsonObject ticket = decipherJsonObject(secretCipher, req.getString("ticket"));
         StreamCipher sessionCipher = new XorWithKey(fromBase64(ticket.getString("key")));
-        JsonObject request = decipherJsonObject(sessionCipher, "request");
+        JsonObject request = decipherJsonObject(sessionCipher, req.getString("request"));
 
-        boolean hasExpired = getDate(ticket, "expiry").after(new Date());
+        Date expiry = getDate(ticket, "expiry");
+        boolean hasExpired = expiry.before(new Date());
         boolean isDifferentIp = !source.toString().equals(ticket.getString("address"));
         boolean isDifferentId = !request.getString("id").equals(ticket.getString("id"));
 
         if (hasExpired || isDifferentId || isDifferentIp) {
-            logger.Log(LogType.Error, "Invalid auth details. Expired: %b, WrongIp: %b, isDifferentId: %b");
+            logger.Log(LogType.Error, "Invalid auth details. Expired: %b, WrongIp: %b, isDifferentId: %b", hasExpired, isDifferentIp, isDifferentId);
             return new InvalidResponse(logger, new Date());
         }
 

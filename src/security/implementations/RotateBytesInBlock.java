@@ -28,7 +28,7 @@ public class RotateBytesInBlock extends BlockCipher {
     }
 
     byte[] rotate(byte[] block, int howMuch) {
-        howMuch = putWithinRange(howMuch, blockSize);
+        howMuch = putWithinRange(howMuch, block.length);
 
         byte[] encryptedBlock = new byte[block.length];
         System.arraycopy(block, 0, encryptedBlock, howMuch, encryptedBlock.length - howMuch);

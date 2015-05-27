@@ -24,31 +24,49 @@ public abstract class StreamCipher implements Cipher {
     }
 
     class DecryptedInStream extends InputStream {
-        final InputStream inStream;
+        final InputStream baseStream;
 
-        public DecryptedInStream(InputStream inStream) {
-            this.inStream = inStream;
+        public DecryptedInStream(InputStream baseStream) {
+            this.baseStream = baseStream;
         }
 
         int position = 0;
 
         @Override
         public int read() throws IOException {
-            return decrypt((byte) inStream.read(), position++);
+            int next = baseStream.read();
+            return next == -1 ? -1 : decrypt((byte) (next & 0xFF), position++);
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            baseStream.close();
         }
     }
 
     class EncryptedOutStream extends OutputStream {
-        final OutputStream outStream;
+        final OutputStream baseStream;
 
-        public EncryptedOutStream(OutputStream outStream) {
-            this.outStream = outStream;
+        public EncryptedOutStream(OutputStream innerStream) {
+            this.baseStream = innerStream;
         }
 
         int position = 0;
 
         public void write(int b) throws IOException {
-            outStream.write(encrypt((byte) b, position++));
+            baseStream.write(encrypt((byte) (b & 0xFF), position++));
+        }
+
+        @Override
+        public void flush() throws IOException {
+            baseStream.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            baseStream.close();
         }
     }
 }

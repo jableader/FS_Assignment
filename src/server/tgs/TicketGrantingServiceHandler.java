@@ -36,7 +36,9 @@ public class TicketGrantingServiceHandler implements RequestHandler {
 
     @Override
     public Response getResponse(InetAddress source, JsonObject req) {
-        JsonObject tgt = decipherJsonObject(tgsSecretCipher, req.getString("tgt"));
+        JsonObject tgt;
+        tgt = decipherJsonObject(tgsSecretCipher, req.getString("tgt"));
+
         StreamCipher tgsSessionCipher = new XorWithKey(fromBase64(tgt.getString("key")));
         JsonObject authenticator = decipherJsonObject(tgsSessionCipher, req.getString("authenticator"));
 
@@ -51,7 +53,7 @@ public class TicketGrantingServiceHandler implements RequestHandler {
         } else {
             logger.Log(LogType.Verbose, "TGS Request verified, exchanging session key");
 
-            return new GetSessionKeyResponse(logger, new Date(), keyManager, source, millisFromNow(1000 * 60 * 60), serviceSecretCipher, tgsSessionCipher, tgt.getString("id"), source);
+            return new TicketGrantingServiceResponse(logger, new Date(), keyManager, source, secondsFromNow(1000 * 60 * 60), serviceSecretCipher, tgsSessionCipher, tgt.getString("id"), source);
         }
     }
 }

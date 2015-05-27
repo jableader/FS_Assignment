@@ -3,6 +3,7 @@ package common;
 import security.Cipher;
 
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import java.io.*;
 import java.util.Base64;
@@ -26,14 +27,18 @@ public final class Tools {
         return new Date(jso.getJsonNumber(s).longValue());
     }
 
-    public static Date millisFromNow(long millis) {
-        return new Date(new Date().getTime() + millis);
+    public static Date secondsFromNow(long seconds) {
+        return new Date(new Date().getTime() + seconds * 1000);
     }
 
-    public static JsonObject decipherJsonObject(Cipher c, String s) {
+    public static JsonObject decipherJsonObject(Cipher c, String s) throws IllegalArgumentException {
         InputStream byteStream = new ByteArrayInputStream(fromBase64(s));
         InputStream decipheredStream = c.getDecipheringStream(byteStream);
 
-        return Json.createReader(decipheredStream).readObject();
+        try {
+            return Json.createReader(decipheredStream).readObject();
+        } catch (JsonException jsex) {
+            throw new IllegalArgumentException("Could not decrypt with the given cipher", jsex);
+        }
     }
 }

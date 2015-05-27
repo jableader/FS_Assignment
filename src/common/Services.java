@@ -1,11 +1,12 @@
 package common;
 
 /**
- * Created by Jableader on 13/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public enum Services {
     Authentication("TGT"),
-    TicketGranting("GSK"),
+    TicketGranting("TGS"),
     ServerService("SER"),
     Invalid("INV");
 
