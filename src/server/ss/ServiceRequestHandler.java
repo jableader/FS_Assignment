@@ -2,8 +2,10 @@ package server.ss;
 
 import logging.LogType;
 import logging.Logger;
-import security.BasicCipher;
+import logging.PrefixedLogger;
 import security.Cipher;
+import security.implementations.XorWithKey;
+import security.StreamCipher;
 import server.InvalidResponse;
 import server.RequestHandler;
 import server.Response;
@@ -18,19 +20,19 @@ import static common.Tools.*;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class ServiceTicketRequestHandler implements RequestHandler {
+public class ServiceRequestHandler implements RequestHandler {
     final Logger logger;
     final Cipher secretCipher;
 
-    public ServiceTicketRequestHandler(Logger logger, Cipher secretCipher) {
-        this.logger = logger;
+    public ServiceRequestHandler(Logger logger, Cipher secretCipher) {
+        this.logger = new PrefixedLogger(logger, "SS: ");
         this.secretCipher = secretCipher;
     }
 
     @Override
     public Response getResponse(InetAddress source, JsonObject req) {
         JsonObject ticket = decipherJsonObject(secretCipher, req.getString("ticket"));
-        Cipher sessionCipher = new BasicCipher(fromBase64(ticket.getString("key")));
+        StreamCipher sessionCipher = new XorWithKey(fromBase64(ticket.getString("key")));
         JsonObject request = decipherJsonObject(sessionCipher, "request");
 
         boolean hasExpired = getDate(ticket, "expiry").after(new Date());
@@ -42,6 +44,6 @@ public class ServiceTicketRequestHandler implements RequestHandler {
             return new InvalidResponse(logger, new Date());
         }
 
-        return new ServiceTicketRequest(logger, new Date(), sessionCipher, serviceSecretCipher);
+        return new ServiceResponse(logger, new Date(), sessionCipher, request.getString("command"), getDate(request, "time"));
     }
 }

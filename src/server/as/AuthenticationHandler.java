@@ -3,6 +3,7 @@ package server.as;
 import common.*;
 import logging.Logger;
 import logging.PrefixedLogger;
+import security.Cipher;
 import server.RequestHandler;
 import server.Response;
 
@@ -19,11 +20,13 @@ import static common.Tools.getDate;
  * Created by Jacob Dunk
  */
 public class AuthenticationHandler implements RequestHandler {
-    final Logger logger;
-    final LoginManager loginManager;
-    final KeyManager keyManager;
+    private final Logger logger;
+    private final LoginManager loginManager;
+    private final KeyManager keyManager;
+    private final Cipher tgsCipher;
 
-    public AuthenticationHandler(Logger logger) throws IOException {
+    public AuthenticationHandler(Logger logger, Cipher tgsCipher) throws IOException {
+        this.tgsCipher = tgsCipher;
         this.logger = new PrefixedLogger(logger, "AS: ");
         keyManager = new KeyManager(this.logger);
         loginManager = new LoginManager(this.logger, new File("logins.txt"));
@@ -31,11 +34,11 @@ public class AuthenticationHandler implements RequestHandler {
 
     @Override
     public Response getResponse(InetAddress address, JsonObject jsonRequest) {
-        return new TgtResponse(
+        return new AuthenticationServiceResponse(
                 logger,
                 loginManager.getLogin(jsonRequest.getString("id")),
                 address,
-                keyManager,
+                tgsCipher, keyManager,
                 new Date(),
                 getDate(jsonRequest, "expiry")
         );

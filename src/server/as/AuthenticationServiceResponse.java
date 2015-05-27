@@ -4,9 +4,8 @@ import common.Key;
 import common.KeyManager;
 import common.Login;
 import logging.Logger;
-import security.BasicCipher;
 import security.Cipher;
-import security.EmptyCipher;
+import security.implementations.XorWithKey;
 import server.Response;
 
 import javax.json.Json;
@@ -20,30 +19,26 @@ import static common.Tools.toBase64;
 /**
  * Created by Jableader on 14/5/2015.
  */
-class TgtResponse extends Response {
+class AuthenticationServiceResponse extends Response {
     private final Key key;
     private final Login login;
     private final InetAddress clientAddress;
+    private final Cipher tgsSecretCipher;
+    private final Cipher clientSecretCipher;
 
-    public TgtResponse(Logger logger, Login login, InetAddress address, KeyManager keyManager, Date dateCreated, Date expiry) {
+
+    public AuthenticationServiceResponse(Logger logger, Login login, InetAddress address, Cipher tgsCipher, KeyManager keyManager, Date dateCreated, Date expiry) {
         super(logger, dateCreated);
         this.login = login;
         this.clientAddress = address;
+        this.tgsSecretCipher = tgsCipher;
+        this.clientSecretCipher = new XorWithKey(login.password);
 
         if (wasSuccess()) {
-            key = keyManager.getRandomKey(expiry);
-            keyManager.registerKey(login, key);
+            key = keyManager.generateKey(expiry);
         } else {
             key = null;
         }
-    }
-
-    protected Cipher getTgsCipher() {
-        return new EmptyCipher();
-    }
-
-    protected Cipher getClientSecretCipher() {
-        return new BasicCipher(login.password);
     }
 
     @Override
@@ -58,18 +53,18 @@ class TgtResponse extends Response {
         if (wasSuccess()) {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-            Json.createGenerator(getClientSecretCipher().getCipheringStream(byteStream))
+            Json.createGenerator(clientSecretCipher.getCipheringStream(byteStream))
                     .writeStartObject()
                     .write("time", timeCreated.getTime())
                     .write("expiry", key.expiry.getTime())
                     .write("key", toBase64(key.key))
                     .writeEnd()
-                    .flush();
+                    .close();
 
             base.add("sessionKey", toBase64(byteStream.toByteArray()));
 
             byteStream = new ByteArrayOutputStream();
-            Json.createGenerator(getTgsCipher().getCipheringStream(byteStream))
+            Json.createGenerator(tgsSecretCipher.getCipheringStream(byteStream))
                     .writeStartObject()
                     .write("id", login.id)
                     .write("clientAddress", clientAddress.toString())
@@ -77,7 +72,7 @@ class TgtResponse extends Response {
                     .write("expiry", key.expiry.getTime())
                     .write("key", toBase64(key.key))
                     .writeEnd()
-                    .flush();
+                    .close();
 
             base.add("tgt", toBase64(byteStream.toByteArray()));
         }

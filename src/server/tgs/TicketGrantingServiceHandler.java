@@ -4,8 +4,9 @@ import common.KeyManager;
 import logging.LogType;
 import logging.Logger;
 import logging.PrefixedLogger;
-import security.BasicCipher;
 import security.Cipher;
+import security.implementations.XorWithKey;
+import security.StreamCipher;
 import server.InvalidResponse;
 import server.Response;
 import server.RequestHandler;
@@ -20,13 +21,13 @@ import static common.Tools.*;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class TicketGrantingService implements RequestHandler {
+public class TicketGrantingServiceHandler implements RequestHandler {
     final KeyManager keyManager;
     final Cipher tgsSecretCipher;
     final Cipher serviceSecretCipher;
     final Logger logger;
 
-    public TicketGrantingService(Logger logger, Cipher tgsSecretCipher, Cipher serviceSecretCipher) {
+    public TicketGrantingServiceHandler(Logger logger, Cipher tgsSecretCipher, Cipher serviceSecretCipher) {
         this.logger = new PrefixedLogger(logger, "TGS: ");
         this.tgsSecretCipher = tgsSecretCipher;
         this.serviceSecretCipher = serviceSecretCipher;
@@ -36,7 +37,7 @@ public class TicketGrantingService implements RequestHandler {
     @Override
     public Response getResponse(InetAddress source, JsonObject req) {
         JsonObject tgt = decipherJsonObject(tgsSecretCipher, req.getString("tgt"));
-        Cipher tgsSessionCipher = new BasicCipher(fromBase64(tgt.getString("key")));
+        StreamCipher tgsSessionCipher = new XorWithKey(fromBase64(tgt.getString("key")));
         JsonObject authenticator = decipherJsonObject(tgsSessionCipher, req.getString("authenticator"));
 
         boolean isDifferentAddress = !tgt.getString("clientAddress").equals(source.toString());

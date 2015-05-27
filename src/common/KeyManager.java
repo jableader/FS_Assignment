@@ -11,7 +11,8 @@ import java.util.Map;
 import static common.Tools.toBase64;
 
 /**
- * Created by Jableader on 11/05/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public class KeyManager {
     final SecureRandom keyGenerator = new SecureRandom();
@@ -26,7 +27,7 @@ public class KeyManager {
         keys.put(login, key);
     }
 
-    public Key getRandomKey(Date expiry) {
+    public Key generateKey(Date expiry) {
         byte[] bytes = new byte[128];
         keyGenerator.nextBytes(bytes);
 

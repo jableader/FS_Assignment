@@ -4,13 +4,13 @@ import security.Cipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.util.Base64;
 import java.util.Date;
 
 /**
- * Created by Jableader on 11/05/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public final class Tools {
 

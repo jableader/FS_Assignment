@@ -3,8 +3,8 @@ package client;
 import common.Login;
 import common.Services;
 import logging.Logger;
-import security.BasicCipher;
-import security.Cipher;
+import security.implementations.XorWithKey;
+import security.StreamCipher;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -45,8 +45,8 @@ public class AuthRequest extends Request {
                 .add("id", login.id);
     }
 
-    public Cipher getTgsCipher() {
-        return new BasicCipher(keyForTgsSession);
+    public StreamCipher getTgsCipher() {
+        return new XorWithKey(keyForTgsSession);
     }
 
     public String getTgt() {

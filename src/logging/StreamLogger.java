@@ -6,7 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Jableader on 10/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public class StreamLogger implements Logger {
     final DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");

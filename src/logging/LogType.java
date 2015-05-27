@@ -1,7 +1,8 @@
 package logging;
 
 /**
- * Created by Jableader on 10/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public enum LogType {
     Error,

@@ -1,68 +1,45 @@
 package security;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import sun.misc.IOUtils;
+
+import java.io.*;
 
 /**
- * Created by Jableader on 10/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
+ *
+ * A very basic interface to create a cipher to wrap a stream
  */
-public abstract class Cipher {
-    protected abstract byte encrypt(byte input, int position);
+public interface Cipher {
+    OutputStream getCipheringStream(OutputStream s);
+    InputStream getDecipheringStream(InputStream s);
 
-    protected abstract byte decrypt(byte input, int position);
+    default byte[] encryptBytes(byte[] b) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(b.length);
+        OutputStream cipherStream = getCipheringStream(bos);
 
-    public OutputStream getCipheringStream(OutputStream s) {
-        return new EncryptedOutStream(s);
-    }
+        try {
+            cipherStream.write(b);
+            cipherStream.flush();
+        } catch (IOException ex) {
 
-    public InputStream getDecipheringStream(InputStream s) {
-        return new DecryptedInStream(s);
-    }
-
-    public byte[] encryptBytes(byte[] source) {
-        byte[] encryptedBytes = new byte[source.length];
-        for (int i = 0; i < encryptedBytes.length; i++)
-            encryptedBytes[i] = encrypt(source[i], i);
-
-        return encryptedBytes;
-    }
-
-    public byte[] decryptBytes(byte[] source) {
-        byte[] decripted = new byte[source.length];
-        for (int i = 0; i < source.length; i++) {
-            decripted[i] = decrypt(source[i], i);
+            ex.printStackTrace();
+            return null;
         }
 
-        return decripted;
+        return bos.toByteArray();
     }
 
-    class DecryptedInStream extends InputStream {
-        final InputStream inStream;
+    default byte[] decryptBytes(byte[] b) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(b);
+        InputStream decipheredInputStream = getDecipheringStream(bis);
 
-        public DecryptedInStream(InputStream inStream) {
-            this.inStream = inStream;
-        }
+        try {
+            return IOUtils.readFully(decipheredInputStream, -1, true);
+        } catch (IOException e) {
 
-        int position = 0;
-
-        @Override
-        public int read() throws IOException {
-            return decrypt((byte) inStream.read(), position++);
-        }
-    }
-
-    class EncryptedOutStream extends OutputStream {
-        final OutputStream outStream;
-
-        public EncryptedOutStream(OutputStream outStream) {
-            this.outStream = outStream;
-        }
-
-        int position = 0;
-
-        public void write(int b) throws IOException {
-            outStream.write(encrypt((byte) b, position++));
+            e.printStackTrace();
+            return null;
         }
     }
 }

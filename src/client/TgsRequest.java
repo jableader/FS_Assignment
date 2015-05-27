@@ -3,8 +3,8 @@ package client;
 import common.Login;
 import common.Services;
 import logging.Logger;
-import security.BasicCipher;
-import security.Cipher;
+import security.implementations.XorWithKey;
+import security.StreamCipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -18,13 +18,13 @@ import static common.Tools.fromBase64;
  */
 public class TgsRequest extends Request {
     private final Login login;
-    private final Cipher sessionCipher;
+    private final StreamCipher sessionCipher;
     private final String tgt;
 
     private String clientTicket;
     private byte[] serviceSessionKey;
 
-    public TgsRequest(Logger logger, int port, Login login, Cipher sessionCipher, String tgt) {
+    public TgsRequest(Logger logger, int port, Login login, StreamCipher sessionCipher, String tgt) {
         super(logger, port, Services.TicketGranting);
         this.login = login;
         this.sessionCipher = sessionCipher;
@@ -51,7 +51,7 @@ public class TgsRequest extends Request {
         return clientTicket;
     }
 
-    public Cipher getSessionCipher() {
-        return new BasicCipher(serviceSessionKey);
+    public StreamCipher getSessionCipher() {
+        return new XorWithKey(serviceSessionKey);
     }
 }

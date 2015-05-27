@@ -15,7 +15,8 @@ import java.util.Date;
 import static common.Tools.toBase64;
 
 /**
- * Created by Jableader on 14/5/2015.
+ * Fundamentals Of Security, Assignment 2
+ * Created by Jacob Dunk
  */
 public class GetSessionKeyResponse extends Response {
     private final KeyManager keyManager;
@@ -45,7 +46,7 @@ public class GetSessionKeyResponse extends Response {
         JsonObjectBuilder base = super.getJsonResponse();
 
         if (wasSuccess()) {
-            Key clientSessionKey = keyManager.getRandomKey(expiry);
+            Key clientSessionKey = keyManager.generateKey(expiry);
 
             ByteArrayOutputStream clientToServerStream = new ByteArrayOutputStream();
             Json.createGenerator(serviceSecretCipher.getCipheringStream(clientToServerStream))
@@ -53,9 +54,9 @@ public class GetSessionKeyResponse extends Response {
                         .write("id", clientId)
                         .write("address", sourceAddress.toString())
                         .write("expiry", clientSessionKey.expiry.getTime())
-                        .write("key", toBase64(keyManager.getRandomKey(expiry).key))
+                        .write("key", toBase64(keyManager.generateKey(expiry).key))
                     .writeEnd()
-                    .flush();
+                    .close();
 
             base.add("clientTicket", toBase64(clientToServerStream.toByteArray()));
 
