@@ -23,11 +23,11 @@ public class Main {
         CommandLineArgs args = new CommandLineArgs(sargs);
         Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"));
         Cipher serviceServerSecretCipher = args.hasKey("c") ?
-                new NoisyAggregateCipher(logger, getServiceServerCipherChain()) :
+                new LoggingAggregateCipher(logger, getServiceServerCipherChain()) :
                 new AggregateCipher(getServiceServerCipherChain());
 
         Cipher tgsSecretCipher = args.hasKey("c") ?
-                new NoisyAggregateCipher(logger, getTgsSecretCipherChain()) :
+                new LoggingAggregateCipher(logger, getTgsSecretCipherChain()) :
                 new AggregateCipher(getTgsSecretCipherChain());
 
         Server server = new Server(logger);

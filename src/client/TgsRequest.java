@@ -57,7 +57,7 @@ public class TgsRequest extends Request {
         clientTicket = response.getString("clientTicket");
 
         serviceSessionKey = tgsSessionCipher.decryptBytes(fromBase64(response.getString("key")));
-        logger.Log(LogType.Verbose, "Recieved serviceSessionKey " + toBase64(serviceSessionKey));
+        logger.Log(LogType.Verbose, "Received serviceSessionKey " + toBase64(serviceSessionKey));
     }
 
     public String getClientTicket() {

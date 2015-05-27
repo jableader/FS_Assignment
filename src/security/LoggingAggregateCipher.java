@@ -5,22 +5,20 @@ import logging.Logger;
 import sun.misc.IOUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import static common.Tools.toBase64;
 
 /**
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
+ *
+ * Provides logging to the cipher methods
  */
-public class NoisyAggregateCipher implements Cipher {
+public class LoggingAggregateCipher implements Cipher {
     private final Logger logger;
     private final Cipher[] ciphers;
 
-    public NoisyAggregateCipher(Logger logger, Cipher... ciphers){
+    public LoggingAggregateCipher(Logger logger, Cipher... ciphers){
         this.ciphers = ciphers;
         this.logger = logger;
     }
