@@ -14,7 +14,7 @@ public class RotateBytesInBlock extends BlockCipher {
     public RotateBytesInBlock(int shiftByAmount, int blockSize) {
         super(blockSize);
 
-        if (shiftByAmount < 0 || shiftByAmount > blockSize)
+        if (shiftByAmount < 0 || shiftByAmount >= blockSize)
             throw new IllegalArgumentException("shiftByAmount must be between 0 and blockSize");
 
         this.shiftByAmount = shiftByAmount;
@@ -27,7 +27,11 @@ public class RotateBytesInBlock extends BlockCipher {
 
     @Override
     protected byte[] decrypt(byte[] block, byte[] previousEncryptedBlock) {
-        return rotate(block, block.length - shiftByAmount);
+        int amount = block.length - shiftByAmount;
+        while (amount < 0)
+            amount += block.length;
+
+        return rotate(block, amount);
     }
 
     static byte[] rotate(byte[] block, int howMuch) {

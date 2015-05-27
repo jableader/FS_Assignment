@@ -72,13 +72,12 @@ public class Main {
 
         byte[] key = "OMG so secure!!1!1!!".getBytes();
         byte[] initialisationVector = "Pretend this got generated elsewhere instead of being a code constant".getBytes();
-        int blockSize = initialisationVector.length;
 
         return new AggregateCipher(
-                new XorWithPreviousBlock(initialisationVector),
-                new RotateBytesInBlock(key.length, blockSize),
                 new SwapNibbles(),
-                new XorWithKey(key)
+                new XorWithKey(key),
+                new XorWithPreviousBlock(initialisationVector),
+                new RotateBytesInBlock(key.length % initialisationVector.length, initialisationVector.length)
         );
     }
 
@@ -87,12 +86,11 @@ public class Main {
         //Distributed between the services
 
         byte[] key = "Ziggy played guitar!".getBytes();
-        byte[] initialisationVector = "Pretend this got generated elsewhere instead of being a code constant".getBytes();
+        byte[] initialisationVector = "A different init vector to the last".getBytes();
 
         return new AggregateCipher(
-                new XorWithKey(key),
-                new RotateBits(4),
                 new SwapNibbles(),
+                new XorWithKey(key),
                 new XorWithPreviousBlock(initialisationVector)
         );
     }

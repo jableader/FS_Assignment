@@ -65,7 +65,11 @@ public abstract class BlockCipher implements Cipher {
 
         @Override
         public void flush() throws IOException {
-            baseStream.write(encrypt(Arrays.copyOf(buffer, bufferPosition), encryptedPreviousBuffer));
+            if (bufferPosition > 0) {
+                baseStream.write(encrypt(Arrays.copyOf(buffer, bufferPosition), encryptedPreviousBuffer));
+                bufferPosition = 0;
+            }
+
             baseStream.flush();
         }
 

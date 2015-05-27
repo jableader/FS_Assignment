@@ -26,7 +26,7 @@ public class TicketGrantingServiceResponse extends Response {
     private final String clientId;
     private final InetAddress sourceAddress;
 
-    public TicketGrantingServiceResponse(Logger logger, Date timeCreated, KeyManager keyManager, InetAddress source, Date expiry, Cipher serviceSecretCipher, Cipher tgsSessionCipher, String clientId, InetAddress sourceAddress) {
+    public TicketGrantingServiceResponse(Logger logger, Date timeCreated, KeyManager keyManager, Date expiry, Cipher serviceSecretCipher, Cipher tgsSessionCipher, String clientId, InetAddress sourceAddress) {
         super(logger, timeCreated);
         this.keyManager = keyManager;
         this.expiry = expiry;

@@ -53,7 +53,7 @@ public class TicketGrantingServiceHandler implements RequestHandler {
         } else {
             logger.Log(LogType.Verbose, "TGS Request verified, exchanging session key");
 
-            return new TicketGrantingServiceResponse(logger, new Date(), keyManager, source, secondsFromNow(1000 * 60 * 60), serviceSecretCipher, tgsSessionCipher, tgt.getString("id"), source);
+            return new TicketGrantingServiceResponse(logger, new Date(), keyManager, secondsFromNow(1000 * 60 * 60), serviceSecretCipher, tgsSessionCipher, tgt.getString("id"), source);
         }
     }
 }
