@@ -1,12 +1,11 @@
 package server.tgs;
 
 import common.KeyManager;
+import common.Tools;
 import logging.LogType;
 import logging.Logger;
 import logging.PrefixedLogger;
 import security.Cipher;
-import security.implementations.XorWithKey;
-import security.StreamCipher;
 import server.InvalidResponse;
 import server.Response;
 import server.RequestHandler;
@@ -39,7 +38,7 @@ public class TicketGrantingServiceHandler implements RequestHandler {
         JsonObject tgt;
         tgt = decipherJsonObject(tgsSecretCipher, req.getString("tgt"));
 
-        StreamCipher tgsSessionCipher = new XorWithKey(fromBase64(tgt.getString("key")));
+        Cipher tgsSessionCipher = Tools.cipherForUseBetweenClientAndServer(fromBase64(tgt.getString("key")), logger);
         JsonObject authenticator = decipherJsonObject(tgsSessionCipher, req.getString("authenticator"));
 
         boolean isDifferentAddress = !tgt.getString("clientAddress").equals(source.toString());

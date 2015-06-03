@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class main {
     public static void main(String[] sargs)  {
         CommandLineArgs args = new CommandLineArgs(sargs);
-        Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"));
+        Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"), args.hasKey("c"));
 
         if (!args.hasKey("l") && !args.hasKey("p"))
             logger.Log(LogType.Warning, "You have not provided a login and password, therefore 'bob' and 'password123' will be used");
@@ -55,7 +55,7 @@ public class main {
             MainRequest request = new MainRequest(logger, mainPort, line, ticket, sessionCipher, login);
             request.executeRequest();
             if (request.wasSuccess()) {
-                logger.Log(LogType.Standard, "Recieved back " + request.getResult());
+                logger.Log(LogType.Standard, "Received back " + request.getResult());
             } else {
                 logger.Log(LogType.Warning, "The request was not successful");
             }

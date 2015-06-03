@@ -35,7 +35,7 @@ public abstract class StreamCipher implements Cipher {
         @Override
         public int read() throws IOException {
             int next = baseStream.read();
-            return next == -1 ? -1 : decrypt((byte) (next & 0xFF), position++);
+            return next == -1 ? -1 : (decrypt((byte) (next & 0xFF), position++) & 0xFF);
         }
 
         @Override
@@ -55,7 +55,7 @@ public abstract class StreamCipher implements Cipher {
         int position = 0;
 
         public void write(int b) throws IOException {
-            baseStream.write(encrypt((byte) (b & 0xFF), position++));
+            baseStream.write(encrypt((byte) (b & 0xFF), position++) & 0xFF);
         }
 
         @Override

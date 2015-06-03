@@ -21,14 +21,9 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] sargs) throws IOException {
         CommandLineArgs args = new CommandLineArgs(sargs);
-        Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"));
-        Cipher serviceServerSecretCipher = args.hasKey("c") ?
-                new LoggingAggregateCipher(logger, getServiceServerCipherChain()) :
-                new AggregateCipher(getServiceServerCipherChain());
-
-        Cipher tgsSecretCipher = args.hasKey("c") ?
-                new LoggingAggregateCipher(logger, getTgsSecretCipherChain()) :
-                new AggregateCipher(getTgsSecretCipherChain());
+        Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"), args.hasKey("c"));
+        Cipher serviceServerSecretCipher = new LoggingAggregateCipher(logger, getServiceServerCipherChain());
+        Cipher tgsSecretCipher = new LoggingAggregateCipher(logger, getTgsSecretCipherChain());
 
         Server server = new Server(logger);
 

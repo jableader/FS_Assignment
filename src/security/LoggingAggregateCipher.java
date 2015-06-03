@@ -82,7 +82,7 @@ public class LoggingAggregateCipher implements Cipher {
             logger.Log(LogType.Cipher, "Original As String :: " + new String(bs));
             logger.Log(LogType.Cipher, "Original :: " + toBase64(bs));
 
-            for (Cipher c: ciphers) {
+            for (Cipher c : ciphers) {
                 bs = c.encryptBytes(bs);
                 logger.Log(LogType.Cipher, c.toString() + " :: " + toBase64(bs));
             }

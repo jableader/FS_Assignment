@@ -1,6 +1,12 @@
 package common;
 
+import logging.Logger;
+import security.AggregateCipher;
 import security.Cipher;
+import security.LoggingAggregateCipher;
+import security.implementations.SwapNibbles;
+import security.implementations.XorWithKey;
+import security.implementations.XorWithPreviousBlock;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -40,5 +46,15 @@ public final class Tools {
         } catch (JsonException jsex) {
             throw new IllegalArgumentException("Could not decrypt with the given cipher", jsex);
         }
+    }
+
+    public static Cipher cipherForUseBetweenClientAndServer(byte[] key, Logger logger) {
+        Cipher[] ciphers = new Cipher[] {
+                new XorWithKey(key),
+                new XorWithPreviousBlock("pretend I was generated elsewhere".getBytes()),
+                new SwapNibbles()
+        };
+
+        return logger == null ? new AggregateCipher(ciphers) : new LoggingAggregateCipher(logger, ciphers);
     }
 }

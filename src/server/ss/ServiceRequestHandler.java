@@ -1,5 +1,6 @@
 package server.ss;
 
+import common.Tools;
 import logging.LogType;
 import logging.Logger;
 import logging.PrefixedLogger;
@@ -32,7 +33,7 @@ public class ServiceRequestHandler implements RequestHandler {
     @Override
     public Response getResponse(InetAddress source, JsonObject req) {
         JsonObject ticket = decipherJsonObject(secretCipher, req.getString("ticket"));
-        StreamCipher sessionCipher = new XorWithKey(fromBase64(ticket.getString("key")));
+        Cipher sessionCipher = Tools.cipherForUseBetweenClientAndServer(fromBase64(ticket.getString("key")), logger);
         JsonObject request = decipherJsonObject(sessionCipher, req.getString("request"));
 
         Date expiry = getDate(ticket, "expiry");

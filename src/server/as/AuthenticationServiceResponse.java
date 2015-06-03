@@ -3,6 +3,7 @@ package server.as;
 import common.Key;
 import common.KeyManager;
 import common.Login;
+import common.Tools;
 import logging.Logger;
 import security.Cipher;
 import security.implementations.XorWithKey;
@@ -26,13 +27,12 @@ class AuthenticationServiceResponse extends Response {
     private final Cipher tgsSecretCipher;
     private final Cipher clientSecretCipher;
 
-
     public AuthenticationServiceResponse(Logger logger, Login login, InetAddress address, Cipher tgsCipher, KeyManager keyManager, Date dateCreated, Date expiry) {
         super(logger, dateCreated);
         this.login = login;
         this.clientAddress = address;
         this.tgsSecretCipher = tgsCipher;
-        this.clientSecretCipher = new XorWithKey(login.password);
+        this.clientSecretCipher = Tools.cipherForUseBetweenClientAndServer(login.password, logger);
 
         if (wasSuccess()) {
             key = keyManager.generateKey(expiry);

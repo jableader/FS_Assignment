@@ -3,6 +3,7 @@ package client;
 import common.Services;
 import logging.LogType;
 import logging.Logger;
+import security.Cipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;

@@ -2,11 +2,10 @@ package client;
 
 import common.Login;
 import common.Services;
+import common.Tools;
 import logging.LogType;
 import logging.Logger;
 import security.Cipher;
-import security.implementations.XorWithKey;
-import security.StreamCipher;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -64,7 +63,7 @@ public class TgsRequest extends Request {
         return clientTicket;
     }
 
-    public StreamCipher getSessionCipher() {
-        return new XorWithKey(serviceSessionKey);
+    public Cipher getSessionCipher() {
+        return Tools.cipherForUseBetweenClientAndServer(serviceSessionKey, null);
     }
 }

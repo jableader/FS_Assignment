@@ -18,7 +18,7 @@ public class XorWithPreviousBlock extends BlockCipher {
     protected byte[] encrypt(byte[] block, byte[] previousEncryptedBlock) {
         byte[] newArray = new byte[block.length];
         for (int i = 0; i < newArray.length; i++)
-            newArray[i] = (byte) ((block[i] & 0xFF) ^ (previousEncryptedBlock[i] & 0xFF));
+            newArray[i] = (byte) (block[i] ^ previousEncryptedBlock[i]);
 
         return newArray;
     }

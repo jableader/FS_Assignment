@@ -53,7 +53,7 @@ public abstract class BlockCipher implements Cipher {
 
         @Override
         public void write(int b) throws IOException {
-            buffer[bufferPosition] = (byte)b;
+            buffer[bufferPosition] = (byte)(b & 0xFF);
 
             if (++bufferPosition == buffer.length) {
                 encryptedPreviousBuffer = encrypt(buffer, encryptedPreviousBuffer);
@@ -92,6 +92,8 @@ public abstract class BlockCipher implements Cipher {
 
         private BlockInputStream(InputStream baseStream) {
             this.baseStream = baseStream;
+
+
         }
 
         @Override
@@ -112,7 +114,7 @@ public abstract class BlockCipher implements Cipher {
                 bufferPosition = 0;
             }
 
-            return decryptedCurrentBlock[bufferPosition++];
+            return decryptedCurrentBlock[bufferPosition++] & 0xFF;
         }
 
         @Override

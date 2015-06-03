@@ -2,10 +2,12 @@ package client;
 
 import common.Login;
 import common.Services;
+import common.Tools;
 import logging.LogType;
 import logging.Logger;
+import security.AggregateCipher;
 import security.Cipher;
-import security.implementations.XorWithKey;
+import security.implementations.*;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -59,11 +61,11 @@ public class AuthRequest extends Request {
     }
 
     Cipher getLoginCipher() {
-        return new XorWithKey(login.password);
+        return Tools.cipherForUseBetweenClientAndServer(login.password, null);
     }
 
     public Cipher getTgsCipher() {
-        return new XorWithKey(keyForTgsSession);
+        return Tools.cipherForUseBetweenClientAndServer(keyForTgsSession, null);
     }
 
     public String getTgt() {
