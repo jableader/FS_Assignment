@@ -14,7 +14,7 @@ import java.util.Scanner;
  * Fundamentals Of Security, Assignment 2
  * Created by Jacob Dunk
  */
-public class main {
+public class MMain {
     public static void main(String[] sargs)  {
         CommandLineArgs args = new CommandLineArgs(sargs);
         Logger logger = new StreamLogger(System.out, System.err, args.hasKey("v"), args.hasKey("c"));
