@@ -64,6 +64,6 @@ public class TgsRequest extends Request {
     }
 
     public Cipher getSessionCipher() {
-        return Tools.cipherForUseBetweenClientAndServer(serviceSessionKey, null);
+        return Tools.cipherForUseBetweenClientAndServer(serviceSessionKey, logger);
     }
 }

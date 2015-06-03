@@ -61,11 +61,11 @@ public class AuthRequest extends Request {
     }
 
     Cipher getLoginCipher() {
-        return Tools.cipherForUseBetweenClientAndServer(login.password, null);
+        return Tools.cipherForUseBetweenClientAndServer(login.password, logger);
     }
 
     public Cipher getTgsCipher() {
-        return Tools.cipherForUseBetweenClientAndServer(keyForTgsSession, null);
+        return Tools.cipherForUseBetweenClientAndServer(keyForTgsSession, logger);
     }
 
     public String getTgt() {
